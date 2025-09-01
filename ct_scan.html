@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CT斷層掃描與線性方程組</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            flex-direction: column;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 1400px;
+            width: 95%;
+        }
+        h1 { color: #1a2a4c; text-align: center; }
+        .explanation {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #28a745;
+            text-align: left;
+            margin: 20px 0;
+        }
+        .layout-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 25px;
+        }
+        .main-content {
+            flex: 2;
+            min-width: 320px;
+        }
+        .simulation-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: nowrap; /* 強制不換行 */
+            margin-top: 20px;
+            overflow-x: auto; /* 在極窄螢幕下提供滾動條 */
+            padding-bottom: 10px;
+        }
+        .canvas-wrapper {
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex-shrink: 0; /* 防止項目被壓縮 */
+        }
+        .canvas-wrapper h3 { width: 100%; text-align: center; }
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background-color: #000;
+        }
+        #scanOverlayCanvas {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            background-color: transparent;
+            border: 2px solid transparent;
+        }
+        .controls {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .math-section {
+            flex: 1.2;
+            min-width: 300px;
+            text-align: left;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .math-section h3 {
+            margin-top: 0;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            color: #1a2a4c;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #aaa; color: #eee; cursor: not-allowed; }
+        #status { font-weight: bold; height: 20px; margin-top: 10px; color: #dc3545;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CT斷層掃描與線性方程組 <b>Cheng-Shu You</b></h1>
+        <div class="explanation">
+            <p>這個範例模擬了CT掃描的核心原理：從一系列一維的投影數據，重建出二維的內部影像。</p>
+            <ul>
+                <li><b>左圖 (原始圖像)</b>：代表我們想得知的體內密度分佈，也就是 \(Ax=b\) 中的未知向量 x。</li>
+                <li><b>中圖 (掃描數據)</b>：模擬X光機旋轉掃描後，探測器接收到的數據，也就是已知向量 b。<b>(已加入隨機雜訊)</b></li>
+                <li><b>右圖 (重建圖像)</b>：程式利用迭代法，一步步求解巨型線性方程組，最終得到的解 x 的視覺化結果。</li>
+            </ul>
+        </div>
+
+        <div class="layout-wrapper">
+            <div class="main-content">
+                <div class="controls">
+                    <button id="scanBtn">1. 進行掃描 (建立 b)</button>
+                    <button id="reconBtn" disabled>2. 開始重建 (求解 x)</button>
+                    <div id="status"></div>
+                </div>
+
+                <div class="simulation-container">
+                    <div class="canvas-wrapper">
+                        <h3>原始圖像 \(\mathbf{x}\)</h3>
+                        <canvas id="phantomCanvas" width="256" height="256"></canvas>
+                        <canvas id="scanOverlayCanvas" width="256" height="256"></canvas>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <h3>掃描數據 \(\mathbf{b}\)</h3>
+                        <canvas id="sinogramCanvas" width="256" height="256"></canvas>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <h3>重建圖像 \(\mathbf{x}_{sol}\)</h3>
+                        <canvas id="reconCanvas" width="256" height="256"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="math-section">
+                <h3>數學原理 (The Math Behind)</h3>
+                <h4>1. 核心方程 (The Core Equation)</h4>
+                <p>整個問題可以被模型化為一個巨型的線性方程組：</p>
+                $$ \mathbf{A}\mathbf{x} = \mathbf{b} + \boldsymbol{\epsilon} $$
+                <ul>
+                    <li>\(\mathbf{x}\)：我們想求的<b>未知</b>圖像。</li>
+                    <li>\(\mathbf{b}\)：理想中無雜訊的<b>已知</b>投影數據。</li>
+                    <li>\(\boldsymbol{\epsilon}\)：代表感測器讀取時產生的隨機<b>雜訊</b>。我們實際得到的數據是 `\(\mathbf{b} + \boldsymbol{\epsilon}\)`。</li>
+                    <li>\(\mathbf{A}\)：系統矩陣。</li>
+                </ul>
+
+                <h4>2. 掃描過程 (Forward Projection)</h4>
+                <p>「進行掃描」的過程，就是計算 `\(\mathbf{b}\)` 並疊加雜訊 `\(\boldsymbol{\epsilon}\)`。</p>
+                $$ b_i = \sum_{j=1}^{N} A_{ij} x_j $$
+
+                <h4>3. 重建演算法 (ART)</h4>
+                <p>演算法的目標是從帶有雜訊的數據中，盡可能還原出最接近真實的 `\(\mathbf{x}\)`。雜訊的存在會讓重建結果產生偽影 (artifacts)，這正是真實世界中 CT 重建的一大挑戰。</p>
+                 <p><b>步驟一：計算誤差</b></p>
+                $$ \Delta b_i^{(k)} = (b_i + \epsilon_i) - \sum_{j \in \text{path}_i} x_j^{(k)} $$
+                <p><b>步驟二：更新像素值</b></p>
+                $$ x_j^{(k+1)} = x_j^{(k)} + \frac{\Delta b_i^{(k)}}{N_i} $$
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 設定 ---
+        const GRID_SIZE = 64; 
+        const PROJECTIONS = 180;
+        const ITERATIONS = 30;
+        // --- 新增：雜訊設定 ---
+        // 嘗試調整此數值 (建議 0.5 ~ 3.0)，觀察對重建結果的影響
+        const NOISE_LEVEL = 1.5;
+
+        // --- 獲取 DOM 元素 ---
+        const phantomCanvas = document.getElementById('phantomCanvas');
+        const sinogramCanvas = document.getElementById('sinogramCanvas');
+        const reconCanvas = document.getElementById('reconCanvas');
+        const scanOverlayCanvas = document.getElementById('scanOverlayCanvas');
+        const pCtx = phantomCanvas.getContext('2d');
+        const sCtx = sinogramCanvas.getContext('2d');
+        const rCtx = reconCanvas.getContext('2d');
+        const oCtx = scanOverlayCanvas.getContext('2d');
+        const scanBtn = document.getElementById('scanBtn');
+        const reconBtn = document.getElementById('reconBtn');
+        const statusEl = document.getElementById('status');
+        
+        let phantomData, sinogramData, reconData;
+        let projectionPaths = [];
+        let animationFrameId;
+        // --- 新增：高斯雜訊生成器 ---
+        let spareGaussian = null;
+        function generateGaussianNoise(mean, stdDev) {
+            if (spareGaussian !== null) {
+                const result = mean + stdDev * spareGaussian;
+                spareGaussian = null;
+                return result;
+            }
+            let u, v, s;
+            do {
+                u = Math.random() * 2 - 1;
+                v = Math.random() * 2 - 1;
+                s = u * u + v * v;
+            } while (s >= 1 || s === 0);
+            const mul = Math.sqrt(-2.0 * Math.log(s) / s);
+            spareGaussian = v * mul;
+            return mean + stdDev * (u * mul);
+        }
+
+        function drawImage(ctx, data) {
+            const canvas = ctx.canvas;
+            const size = Math.sqrt(data.length);
+            const cellSize = canvas.width / size;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const value = data[y * size + x];
+                    const color = Math.floor(value * 255);
+                    ctx.fillStyle = `rgb(${color},${color},${color})`;
+                    ctx.fillRect(x * cellSize, y * cellSize, cellSize + 1, cellSize + 1);
+                }
+            }
+        }
+
+        function createPhantom() {
+            phantomData = new Float32Array(GRID_SIZE * GRID_SIZE).fill(0.0);
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = GRID_SIZE;
+            tempCanvas.height = GRID_SIZE;
+            const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
+            tempCtx.fillStyle = 'white';
+            tempCtx.font = `bold ${GRID_SIZE * 0.85}px "KaiTi", "標楷體", serif`;
+            tempCtx.textAlign = 'center';
+            tempCtx.textBaseline = 'middle';
+            tempCtx.fillText('逢', GRID_SIZE / 2, GRID_SIZE / 2);
+            const imageData = tempCtx.getImageData(0, 0, GRID_SIZE, GRID_SIZE).data;
+            for (let i = 0; i < imageData.length; i += 4) {
+                if (imageData[i] > 0) {
+                    const pixelIndex = i / 4;
+                    phantomData[pixelIndex] = 1.0;
+                }
+            }
+        }
+
+        let currentProjection = 0;
+        function scanAnimation() {
+            if (currentProjection >= PROJECTIONS) {
+                statusEl.textContent = '掃描完成！可以開始重建。';
+                reconBtn.disabled = false;
+                scanBtn.disabled = false;
+                oCtx.clearRect(0,0,scanOverlayCanvas.width, scanOverlayCanvas.height);
+                cancelAnimationFrame(animationFrameId);
+                return;
+            }
+
+            statusEl.textContent = `掃描中... 角度: ${Math.round(currentProjection / PROJECTIONS * 180)}°`;
+
+            const angle = (currentProjection / PROJECTIONS) * Math.PI;
+            const sin = Math.sin(angle);
+            const cos = Math.cos(angle);
+            const center = GRID_SIZE / 2;
+            
+            for (let j = 0; j < GRID_SIZE; j++) {
+                const t = j - center;
+                let sum = 0;
+                const path = [];
+                for(let k = -GRID_SIZE; k < GRID_SIZE; k++) {
+                    const l = k * 0.7;
+                    const x = Math.round(center + l * cos + t * sin);
+                    const y = Math.round(center + l * sin - t * cos);
+                    if (x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE) {
+                        const index = y * GRID_SIZE + x;
+                        if (!path.includes(index)) {
+                            path.push(index);
+                            sum += phantomData[index];
+                        }
+                    }
+                }
+
+                // --- 在此加入雜訊 ---
+                const noise = generateGaussianNoise(0, NOISE_LEVEL);
+                const noisySum = Math.max(0, sum + noise); // 確保結果不為負
+                
+                const pIndex = currentProjection * GRID_SIZE + j;
+                sinogramData[pIndex] = noisySum;
+                projectionPaths[pIndex] = path;
+            }
+
+            const sCellY = sinogramCanvas.height / PROJECTIONS;
+            const sCellX = sinogramCanvas.width / GRID_SIZE;
+            const maxVal = GRID_SIZE;
+            for (let x = 0; x < GRID_SIZE; x++) {
+                const value = (sinogramData[currentProjection * GRID_SIZE + x] / maxVal) * 255;
+                sCtx.fillStyle = `rgb(${value},${value},${value})`;
+                sCtx.fillRect(x * sCellX, currentProjection * sCellY, sCellX + 1, sCellY + 1);
+            }
+            
+            oCtx.clearRect(0, 0, scanOverlayCanvas.width, scanOverlayCanvas.height);
+            oCtx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
+            oCtx.lineWidth = 1;
+            const canvasCenter = phantomCanvas.width / 2;
+            for (let j = 0; j < GRID_SIZE; j+=4) {
+                const t = (j - center) * (phantomCanvas.width / GRID_SIZE);
+                const startX = canvasCenter + 300 * cos + t * sin;
+                const startY = canvasCenter + 300 * sin - t * cos;
+                const endX = canvasCenter - 300 * cos + t * sin;
+                const endY = canvasCenter - 300 * sin - t * cos;
+                oCtx.beginPath();
+                oCtx.moveTo(startX, startY);
+                oCtx.lineTo(endX, endY);
+                oCtx.stroke();
+            }
+
+            currentProjection++;
+            animationFrameId = requestAnimationFrame(scanAnimation);
+        }
+
+        scanBtn.addEventListener('click', () => {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            scanBtn.disabled = true;
+            reconBtn.disabled = true;
+            currentProjection = 0;
+            sinogramData = new Float32Array(PROJECTIONS * GRID_SIZE);
+            projectionPaths = new Array(PROJECTIONS * GRID_SIZE);
+            sCtx.fillStyle = 'black';
+            sCtx.fillRect(0, 0, sinogramCanvas.width, sinogramCanvas.height);
+            rCtx.fillStyle = 'black';
+            rCtx.fillRect(0, 0, reconCanvas.width, reconCanvas.height);
+            scanAnimation();
+        });
+
+        reconBtn.addEventListener('click', () => {
+            reconData = new Float32Array(GRID_SIZE * GRID_SIZE).fill(0);
+            reconBtn.disabled = true;
+            scanBtn.disabled = true;
+
+            let currentIteration = 0;
+            function runReconstruction() {
+                if (currentIteration >= ITERATIONS) {
+                    statusEl.textContent = '重建完成！';
+                    scanBtn.disabled = false;
+                    return;
+                }
+                statusEl.textContent = `重建中... 迭代次數: ${currentIteration + 1} / ${ITERATIONS}`;
+                for (let i = 0; i < projectionPaths.length; i++) {
+                    const path = projectionPaths[i];
+                    if (!path || path.length === 0) continue;
+                    let currentProjectionSum = 0;
+                    for (const pixelIndex of path) {
+                        currentProjectionSum += reconData[pixelIndex];
+                    }
+                    const error = sinogramData[i] - currentProjectionSum;
+                    const correction = error / path.length;
+                    for (const pixelIndex of path) {
+                        reconData[pixelIndex] = Math.max(0, Math.min(1, reconData[pixelIndex] + correction));
+                    }
+                }
+                drawImage(rCtx, reconData);
+                currentIteration++;
+                requestAnimationFrame(runReconstruction);
+            }
+            runReconstruction();
+        });
+        
+        function init() {
+            createPhantom();
+            drawImage(pCtx, phantomData);
+        }
+
+        init();
+    </script>
+</body>
+</html>

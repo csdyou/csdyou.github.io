@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>核心探索：數位影像的本質</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 基本樣式 */
+        body {
+            background-color: #f1f5f9; /* bg-slate-100 */
+        }
+        .section-card {
+            background-color: white;
+            padding: 2.5rem;
+            margin: 2rem auto;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            max-width: 900px;
+        }
+        /* 隱藏用於處理圖片的 Canvas */
+        .hidden-canvas {
+            display: none;
+        }
+
+        /* --- 灰階互動區塊 CSS --- */
+        .pixel-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+        }
+        .pixel {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            font-family: monospace;
+            cursor: pointer;
+        }
+        .pixel .pixel-value {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: white;
+            text-shadow: 0 0 3px black;
+        }
+        .pixel:hover .pixel-value {
+            opacity: 1;
+        }
+
+        /* --- 彩色影像互動區塊 CSS --- */
+        .image-preview-container {
+            position: relative; /* 作為 tooltip 定位的基準 */
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e2e8f0; /* bg-slate-200 */
+            border-radius: 0.5rem;
+            overflow: hidden;
+            cursor: crosshair; /* 更改滑鼠指標 */
+        }
+        .image-preview-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .pixel-tooltip {
+            position: absolute;
+            display: none; /* 預設隱藏 */
+            padding: 4px 8px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+            pointer-events: none; /* 讓滑鼠事件可以穿透 tooltip */
+            white-space: nowrap;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <main>
+       <section id="image-basics" class="section-card">
+            <h2 class="text-3xl font-bold text-center text-slate-800 mb-8">核心探索：數位影像的本質</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-12">
+                <div>
+                    <h3 class="text-xl font-bold text-blue-800 mb-3">灰階影像：一個巨大的數字矩陣</h3>
+                    <p class="text-slate-700">任何一張數位影像，都是由微小的「像素」（Pixel）所組成。在灰階影像中，每個像素都只是一個介於 0 (全黑) 到 255 (全白) 之間的數字，這個數字代表了它的亮度。因此，整張圖其實就是一個巨大的二維數字陣列！</p>
+                    <p class="mt-4 font-semibold text-slate-600">互動體驗：請將滑鼠移至右方像素化的圖像上，看看每個像素背後的亮度數字。</p>
+                </div>
+                <div id="pixel-container" class="w-60 h-60 mx-auto">
+                    <div class="pixel-grid"></div>
+                </div>
+            </div>
+            <hr class="my-12"/>
+            <div>
+                <h3 class="text-xl font-bold text-blue-800 mb-4 text-center">彩色影像：三個矩陣的交響樂</h3>
+                <p class="text-center max-w-3xl mx-auto mb-6 text-slate-700">彩色影像則更進一步，它通常是由三個獨立的灰階影像（也就是三個數字矩陣）疊加而成，分別代表紅 (Red)、綠 (Green)、藍 (Blue) 三個色彩通道。您可以想像成用三張不同顏色的透明投影片疊在一起，透過不同深淺的組合，創造出繽紛的世界。</p>
+
+                <div class="mb-8 text-center">
+                    <label for="imageUpload" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer transition duration-300">
+                        上傳您的彩色圖片
+                    </label>
+                    <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                    <p id="upload-message" class="mt-2 text-sm text-slate-600">請選擇一張圖片以分析其色彩通道。</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-start">
+                    <div class="text-center">
+                        <div id="originalContainer" class="image-preview-container w-full h-32 md:h-48">
+                            <img id="originalImagePreview" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="原始影像預覽" class="rounded-lg shadow-md">
+                            <div class="pixel-tooltip"></div>
+                        </div>
+                        <p class="mt-2 font-semibold text-slate-800">原始影像</p>
+                    </div>
+                    <div class="text-center">
+                        <div id="redContainer" class="image-preview-container w-full h-32 md:h-48">
+                            <img id="redChannelPreview" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="紅色通道影像預覽" class="rounded-lg shadow-md">
+                            <div class="pixel-tooltip"></div>
+                        </div>
+                        <p class="mt-2 font-semibold text-red-600">紅色通道 (R)</p>
+                    </div>
+                    <div class="text-center">
+                        <div id="greenContainer" class="image-preview-container w-full h-32 md:h-48">
+                            <img id="greenChannelPreview" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="綠色通道影像預覽" class="rounded-lg shadow-md">
+                             <div class="pixel-tooltip"></div>
+                        </div>
+                        <p class="mt-2 font-semibold text-green-600">綠色通道 (G)</p>
+                    </div>
+                    <div class="text-center">
+                        <div id="blueContainer" class="image-preview-container w-full h-32 md:h-48">
+                            <img id="blueChannelPreview" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="藍色通道影像預覽" class="rounded-lg shadow-md">
+                            <div class="pixel-tooltip"></div>
+                        </div>
+                        <p class="mt-2 font-semibold text-blue-600">藍色通道 (B)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <canvas id="hiddenCanvas" class="hidden-canvas"></canvas>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Part 1: Grayscale Pixel Grid Logic ---
+            const gridContainer = document.querySelector('.pixel-grid');
+            const grayscaleMatrix = [
+                [240, 240, 220, 180, 150, 150, 180, 220, 240, 240],[240, 220, 180, 100, 80, 80, 100, 180, 220, 240],[220, 180, 100, 40, 20, 20, 40, 100, 180, 220],[180, 100, 40, 0, 0, 0, 0, 40, 100, 180],[150, 80, 20, 0, 200, 200, 0, 20, 80, 150],[150, 80, 20, 0, 200, 200, 0, 20, 80, 150],[180, 100, 40, 0, 0, 0, 0, 40, 100, 180],[220, 180, 100, 40, 20, 20, 40, 100, 180, 220],[240, 220, 180, 100, 80, 80, 100, 180, 220, 240],[240, 240, 220, 180, 150, 150, 180, 220, 240, 240],
+            ];
+            grayscaleMatrix.flat().forEach(value => {
+                const pixel = document.createElement('div');
+                pixel.classList.add('pixel');
+                pixel.style.backgroundColor = `rgb(${value}, ${value}, ${value})`;
+                const valueSpan = document.createElement('span');
+                valueSpan.classList.add('pixel-value');
+                valueSpan.textContent = value;
+                pixel.appendChild(valueSpan);
+                gridContainer.appendChild(pixel);
+            });
+
+            // --- Part 2: Color Image Upload and Channel Separation Logic ---
+            const imageUpload = document.getElementById('imageUpload');
+            const uploadMessage = document.getElementById('upload-message');
+
+            const hiddenCanvas = document.getElementById('hiddenCanvas');
+            const hiddenCtx = hiddenCanvas.getContext('2d', { willReadFrequently: true });
+            
+            // 儲存原始圖片的像素數據，以便在滑鼠懸停時讀取
+            let originalImageData = null;
+
+            // DOM 元素
+            const previews = {
+                original: {
+                    container: document.getElementById('originalContainer'),
+                    img: document.getElementById('originalImagePreview'),
+                },
+                red: {
+                    container: document.getElementById('redContainer'),
+                    img: document.getElementById('redChannelPreview'),
+                },
+                green: {
+                    container: document.getElementById('greenContainer'),
+                    img: document.getElementById('greenChannelPreview'),
+                },
+                blue: {
+                    container: document.getElementById('blueContainer'),
+                    img: document.getElementById('blueChannelPreview'),
+                }
+            };
+
+            imageUpload.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (!file) {
+                    uploadMessage.textContent = '請選擇一張圖片以分析其色彩通道。';
+                    return;
+                }
+                uploadMessage.textContent = `圖片 "${file.name}" 已選擇，正在處理...`;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        // 設置 Canvas 大小並繪製
+                        hiddenCanvas.width = img.width;
+                        hiddenCanvas.height = img.height;
+                        hiddenCtx.drawImage(img, 0, 0, img.width, img.height);
+                        
+                        // 儲存原始像素數據
+                        originalImageData = hiddenCtx.getImageData(0, 0, img.width, img.height);
+                        
+                        // 生成各通道的 Canvas
+                        const redChannelCanvas = processChannel(originalImageData, 0);
+                        const greenChannelCanvas = processChannel(originalImageData, 1);
+                        const blueChannelCanvas = processChannel(originalImageData, 2);
+
+                        // 更新所有預覽圖片
+                        previews.original.img.src = img.src;
+                        previews.red.img.src = redChannelCanvas.toDataURL();
+                        previews.green.img.src = greenChannelCanvas.toDataURL();
+                        previews.blue.img.src = blueChannelCanvas.toDataURL();
+                        
+                        uploadMessage.textContent = '圖片已成功處理。將滑鼠移至下方圖片上可查看像素值。';
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            /**
+             * 處理單一色彩通道
+             * @param {ImageData} sourceImageData - 來源圖片數據
+             * @param {number} channelIndex - 通道索引 (0:R, 1:G, 2:B)
+             * @returns {HTMLCanvasElement} - 包含通道灰階影像的 Canvas
+             */
+            function processChannel(sourceImageData, channelIndex) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = sourceImageData.width;
+                canvas.height = sourceImageData.height;
+                
+                const channelData = ctx.createImageData(canvas.width, canvas.height);
+                const sourceData = sourceImageData.data;
+
+                for (let i = 0; i < sourceData.length; i += 4) {
+                    const value = sourceData[i + channelIndex];
+                    channelData.data[i] = value;
+                    channelData.data[i + 1] = value;
+                    channelData.data[i + 2] = value;
+                    channelData.data[i + 3] = 255;
+                }
+                ctx.putImageData(channelData, 0, 0);
+                return canvas;
+            }
+
+            // --- Part 3: Tooltip Interaction Logic ---
+
+            /**
+             * 為一個預覽區塊設定滑鼠互動
+             * @param {string} key - 'original', 'red', 'green', or 'blue'
+             */
+            function setupTooltip(key) {
+                const container = previews[key].container;
+                const img = previews[key].img;
+                const tooltip = container.querySelector('.pixel-tooltip');
+
+                container.addEventListener('mouseenter', () => {
+                    if (originalImageData) tooltip.style.display = 'block';
+                });
+
+                container.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+
+                container.addEventListener('mousemove', (e) => {
+                    if (!originalImageData) return;
+
+                    // 取得滑鼠在容器內的座標
+                    const rect = container.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // 計算原始圖片與顯示圖片的縮放比例
+                    const ratioX = originalImageData.width / img.clientWidth;
+                    const ratioY = originalImageData.height / img.clientHeight;
+
+                    // 計算對應到原始圖片數據的像素座標
+                    const sourceX = Math.floor(x * ratioX);
+                    const sourceY = Math.floor(y * ratioY);
+
+                    // 確保座標在範圍內
+                    if (sourceX < 0 || sourceX >= originalImageData.width || sourceY < 0 || sourceY >= originalImageData.height) {
+                        return;
+                    }
+
+                    // 計算在 ImageData.data 陣列中的索引
+                    const index = (sourceY * originalImageData.width + sourceX) * 4;
+                    const r = originalImageData.data[index];
+                    const g = originalImageData.data[index + 1];
+                    const b = originalImageData.data[index + 2];
+                    
+                    // 根據是哪個通道來決定顯示內容
+                    let tooltipText = '';
+                    if (key === 'original') {
+                        tooltipText = `RGB(${r}, ${g}, ${b})`;
+                    } else if (key === 'red') {
+                        tooltipText = `Value: ${r}`;
+                    } else if (key === 'green') {
+                        tooltipText = `Value: ${g}`;
+                    } else if (key === 'blue') {
+                        tooltipText = `Value: ${b}`;
+                    }
+                    
+                    tooltip.textContent = tooltipText;
+                    // 讓 tooltip 顯示在滑鼠右下方一點的位置
+                    tooltip.style.left = `${x + 15}px`;
+                    tooltip.style.top = `${y + 15}px`;
+                });
+            }
+            
+            // 為所有預覽區塊啟用 tooltip 功能
+            Object.keys(previews).forEach(key => setupTooltip(key));
+        });
+    </script>
+
+</body>
+</html>

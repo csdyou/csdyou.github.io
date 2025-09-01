@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>線性代數與影像濾鏡</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            flex-direction: column;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 95%;
+            text-align: center;
+        }
+        h1 { color: #1a2a4c; }
+        .explanation {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #6c757d;
+            text-align: left;
+            margin: 20px 0;
+        }
+        .image-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .canvas-wrapper {
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background-color: #f4f4f4;
+        }
+        .controls, .filters {
+            margin-top: 20px;
+        }
+        button, input[type="file"] {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        button:hover { background-color: #0056b3; }
+        .filter-btn-sepia { background-color: #a0522d; }
+        .filter-btn-sepia:hover { background-color: #804224; }
+        .filter-btn-grayscale { background-color: #6c757d; }
+        .filter-btn-grayscale:hover { background-color: #5a6268; }
+        .filter-btn-invert { background-color: #343a40; }
+        .filter-btn-invert:hover { background-color: #23272b; }
+        .filter-btn-sketch { background-color: #ffc107; color: #333; }
+        .filter-btn-sketch:hover { background-color: #e0a800; }
+        .filter-btn-reset { background-color: #28a745; }
+        .filter-btn-reset:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>線性代數與影像濾鏡</h1>
+        <div class="explanation">
+            <p><b>核心概念：</b>一張圖片是由無數個像素(Pixel)組成的。每個像素的顏色都可以用一個向量 `[R, G, B]` 來表示。</p>
+            <p>簡單的濾鏡（如懷舊、灰階）是透過「矩陣乘法」來轉換顏色向量。而更複雜的藝術效果（如<b>手繪風格</b>）則是透過多步驟的演算法（如邊緣偵測）來實現，這同樣根植於對像素數據的數學運算。</p>
+        </div>
+
+        <div class="controls">
+            <input type="file" id="imageLoader" accept="image/*">
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn-grayscale" data-filter="grayscale">灰階 (Grayscale)</button>
+            <button class="filter-btn-sepia" data-filter="sepia">懷舊 (Sepia)</button>
+            <button class="filter-btn-invert" data-filter="invert">負片 (Invert)</button>
+            <button class="filter-btn-sketch" data-filter="sketch">手繪風格 (Sketch)</button>
+            <button class="filter-btn-reset" data-filter="reset">還原 (Reset)</button>
+        </div>
+
+        <div class="image-container">
+            <div class="canvas-wrapper">
+                <h3>原始圖片</h3>
+                <canvas id="originalCanvas"></canvas>
+            </div>
+            <div class="canvas-wrapper">
+                <h3>濾鏡效果</h3>
+                <canvas id="filteredCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const imageLoader = document.getElementById('imageLoader');
+        const originalCanvas = document.getElementById('originalCanvas');
+        const filteredCanvas = document.getElementById('filteredCanvas');
+        const originalCtx = originalCanvas.getContext('2d');
+        const filteredCtx = filteredCanvas.getContext('2d', { willReadFrequently: true });
+        const filterButtons = document.querySelector('.filters');
+
+        let originalImageData = null;
+
+        imageLoader.addEventListener('change', (e) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const maxWidth = 400;
+                    const scale = maxWidth / img.width;
+                    originalCanvas.width = filteredCanvas.width = img.width * scale;
+                    originalCanvas.height = filteredCanvas.height = img.height * scale;
+
+                    originalCtx.drawImage(img, 0, 0, originalCanvas.width, originalCanvas.height);
+                    filteredCtx.drawImage(img, 0, 0, filteredCanvas.width, filteredCanvas.height);
+                    
+                    originalImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height);
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        });
+
+        filterButtons.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON' && originalImageData) {
+                applyFilter(e.target.dataset.filter);
+            }
+        });
+        
+        // --- 核心濾鏡運算函式 ---
+        function applyFilter(filter) {
+            if (filter === 'reset') {
+                filteredCtx.putImageData(originalImageData, 0, 0);
+                return;
+            }
+             if (filter === 'sketch') {
+                applySketchFilter(); // 手繪風格使用獨立的複雜函式
+                return;
+            }
+
+            const imageData = new ImageData(
+                new Uint8ClampedArray(originalImageData.data),
+                originalImageData.width,
+                originalImageData.height
+            );
+            const data = imageData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i], g = data[i + 1], b = data[i + 2];
+                let newR, newG, newB;
+
+                switch (filter) {
+                    case 'sepia':
+                        newR = 0.393 * r + 0.769 * g + 0.189 * b;
+                        newG = 0.349 * r + 0.686 * g + 0.168 * b;
+                        newB = 0.272 * r + 0.534 * g + 0.131 * b;
+                        break;
+                    case 'grayscale':
+                        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                        newR = newG = newB = gray;
+                        break;
+                    case 'invert':
+                        newR = 255 - r;
+                        newG = 255 - g;
+                        newB = 255 - b;
+                        break;
+                    default:
+                        newR = r; newG = g; newB = b;
+                }
+                
+                data[i] = Math.max(0, Math.min(255, newR));
+                data[i + 1] = Math.max(0, Math.min(255, newG));
+                data[i + 2] = Math.max(0, Math.min(255, newB));
+            }
+            filteredCtx.putImageData(imageData, 0, 0);
+        }
+
+        // --- 手繪風格濾鏡的專門函式 ---
+        function applySketchFilter() {
+            const width = originalCanvas.width;
+            const height = originalCanvas.height;
+
+            // 1. 取得原始灰階數據
+            const grayscaleData = new ImageData(width, height);
+            const grayPixels = grayscaleData.data;
+            for (let i = 0; i < originalImageData.data.length; i += 4) {
+                const r = originalImageData.data[i];
+                const g = originalImageData.data[i + 1];
+                const b = originalImageData.data[i + 2];
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                grayPixels[i] = grayPixels[i + 1] = grayPixels[i + 2] = gray;
+                grayPixels[i + 3] = 255; // Alpha
+            }
+
+            // 2. 建立反轉並模糊的數據
+            // 建立一個離線的 canvas 來處理模糊
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = width;
+            tempCanvas.height = height;
+
+            // 2a. 取得反轉後的數據
+            const invertedData = new ImageData(width, height);
+            for (let i = 0; i < grayPixels.length; i += 4) {
+                invertedData.data[i] = 255 - grayPixels[i];
+                invertedData.data[i+1] = 255 - grayPixels[i+1];
+                invertedData.data[i+2] = 255 - grayPixels[i+2];
+                invertedData.data[i+3] = 255;
+            }
+            tempCtx.putImageData(invertedData, 0, 0);
+
+            // 2b. 進行高斯模糊
+            tempCtx.filter = 'blur(8px)';
+            tempCtx.drawImage(tempCanvas, 0, 0);
+            const blurredInvertedData = tempCtx.getImageData(0, 0, width, height);
+
+            // 3. 顏色減淡混合 (Color Dodge)
+            const finalImageData = filteredCtx.createImageData(width, height);
+            const finalPixels = finalImageData.data;
+            for (let i = 0; i < finalPixels.length; i += 4) {
+                const gray = grayPixels[i];
+                const blurred = blurredInvertedData.data[i];
+                
+                // 核心演算法：Color Dodge
+                // 如果底色(blurred)為全白(255)，結果也是全白
+                const dodge = (blurred === 255) ? 255 : Math.min(255, (gray * 255) / (255 - blurred));
+                
+                finalPixels[i] = dodge;
+                finalPixels[i + 1] = dodge;
+                finalPixels[i + 2] = dodge;
+                finalPixels[i + 3] = 255;
+            }
+
+            // 4. 將最終結果繪製到畫布上
+            filteredCtx.putImageData(finalImageData, 0, 0);
+        }
+    </script>
+</body>
+</html>

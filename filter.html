@@ -78,6 +78,12 @@
         .filter-btn-sketch:hover { background-color: #e0a800; }
         .filter-btn-reset { background-color: #28a745; }
         .filter-btn-reset:hover { background-color: #218838; }
+        .filter-btn-sharpen { background-color: #17a2b8; }
+        .filter-btn-sharpen:hover { background-color: #138496; }
+        /* 新增 */
+        .filter-btn-polaroid { background-color: #8D5A3C; } /* 拍立得棕色調 */
+        .filter-btn-polaroid:hover { background-color: #7A4C30; }
+        /* 新增結束 */
     </style>
 </head>
 <body>
@@ -85,21 +91,20 @@
         <h1>線性代數與影像濾鏡</h1>
         <div class="explanation">
             <p><b>核心概念：</b>一張圖片是由無數個像素(Pixel)組成的。每個像素的顏色都可以用一個向量 `[R, G, B]` 來表示。</p>
-            <p>簡單的濾鏡（如懷舊、灰階）是透過「矩陣乘法」來轉換顏色向量。而更複雜的藝術效果（如<b>手繪風格</b>）則是透過多步驟的演算法（如邊緣偵測）來實現，這同樣根植於對像素數據的數學運算。</p>
+            <p>簡單的濾鏡（如懷舊、灰階）是透過「矩陣乘法」來轉換顏色向量。而更複雜的藝術效果（如<b>銳化</b>、<b>手繪風格</b>、<b>立可拍復古</b>）則是透過多步驟的演算法（如卷積、邊緣偵測、距離運算）來實現，這同樣根植於對像素數據的數學運算。</p>
         </div>
-
         <div class="controls">
             <input type="file" id="imageLoader" accept="image/*">
         </div>
-
         <div class="filters">
             <button class="filter-btn-grayscale" data-filter="grayscale">灰階 (Grayscale)</button>
             <button class="filter-btn-sepia" data-filter="sepia">懷舊 (Sepia)</button>
             <button class="filter-btn-invert" data-filter="invert">負片 (Invert)</button>
+            <button class="filter-btn-sharpen" data-filter="sharpen">銳化 (Sharpen)</button>
             <button class="filter-btn-sketch" data-filter="sketch">手繪風格 (Sketch)</button>
+            <button class="filter-btn-polaroid" data-filter="polaroid">立可拍復古 (Polaroid)</button>
             <button class="filter-btn-reset" data-filter="reset">還原 (Reset)</button>
         </div>
-
         <div class="image-container">
             <div class="canvas-wrapper">
                 <h3>原始圖片</h3>
@@ -111,7 +116,6 @@
             </div>
         </div>
     </div>
-
     <script>
         const imageLoader = document.getElementById('imageLoader');
         const originalCanvas = document.getElementById('originalCanvas');
@@ -134,7 +138,6 @@
 
                     originalCtx.drawImage(img, 0, 0, originalCanvas.width, originalCanvas.height);
                     filteredCtx.drawImage(img, 0, 0, filteredCanvas.width, filteredCanvas.height);
-                    
                     originalImageData = originalCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height);
                 }
                 img.src = event.target.result;
@@ -147,17 +150,27 @@
                 applyFilter(e.target.dataset.filter);
             }
         });
-        
+
         // --- 核心濾鏡運算函式 ---
         function applyFilter(filter) {
             if (filter === 'reset') {
                 filteredCtx.putImageData(originalImageData, 0, 0);
                 return;
             }
-             if (filter === 'sketch') {
+            if (filter === 'sketch') {
                 applySketchFilter(); // 手繪風格使用獨立的複雜函式
                 return;
             }
+            if (filter === 'sharpen') {
+                applySharpenFilter(); 
+                return;
+            }
+            // 新增
+            if (filter === 'polaroid') {
+                applyPolaroidVintageFilter();
+                return;
+            }
+            // 新增結束
 
             const imageData = new ImageData(
                 new Uint8ClampedArray(originalImageData.data),
@@ -188,7 +201,6 @@
                     default:
                         newR = r; newG = g; newB = b;
                 }
-                
                 data[i] = Math.max(0, Math.min(255, newR));
                 data[i + 1] = Math.max(0, Math.min(255, newG));
                 data[i + 2] = Math.max(0, Math.min(255, newB));
@@ -196,12 +208,118 @@
             filteredCtx.putImageData(imageData, 0, 0);
         }
 
+        // --- 新增: 立可拍復古濾鏡的專門函式 ---
+        function applyPolaroidVintageFilter() {
+            const width = originalCanvas.width;
+            const height = originalCanvas.height;
+            const srcData = originalImageData.data;
+            const dstImageData = filteredCtx.createImageData(width, height);
+            const dstData = dstImageData.data;
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            // 根據圖像尺寸調整暗角半徑，避免過度或不足
+            const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY); 
+            const vignetteRadius = maxDistance * 0.8; // 暗角開始影響的半徑
+            const vignetteIntensity = 0.7; // 暗角強度
+
+            for (let i = 0; i < srcData.length; i += 4) {
+                let r = srcData[i];
+                let g = srcData[i + 1];
+                let b = srcData[i + 2];
+
+                // 1. 輕微的懷舊色調 (類似 Sepia)
+                // 調整這些係數可以得到不同的懷舊效果
+                const tr = (r * 0.35 + g * 0.68 + b * 0.17);
+                const tg = (r * 0.30 + g * 0.60 + b * 0.10);
+                const tb = (r * 0.25 + g * 0.50 + b * 0.05);
+
+                r = tr; g = tg; b = tb;
+
+                // 2. 邊緣暗角 (Vignette)
+                const x = (i / 4) % width;
+                const y = Math.floor((i / 4) / width);
+
+                const dist = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+                
+                // 計算衰減係數：離中心越遠，係數越小，顏色越暗
+                let vignette = 1;
+                if (dist > vignetteRadius) {
+                    vignette = 1 - (dist - vignetteRadius) / (maxDistance - vignetteRadius) * vignetteIntensity;
+                    vignette = Math.max(0, Math.min(1, vignette)); // 確保係數在0到1之間
+                }
+                
+                r *= vignette;
+                g *= vignette;
+                b *= vignette;
+
+                // 3. 輕微的飽和度降低 (可選，但有助於復古感)
+                // 先轉灰階，再按比例混合回原色
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                const saturationFactor = 0.85; // 降低15%飽和度
+                r = gray * (1 - saturationFactor) + r * saturationFactor;
+                g = gray * (1 - saturationFactor) + g * saturationFactor;
+                b = gray * (1 - saturationFactor) + b * saturationFactor;
+
+                // 寫入目標數據，並確保值在0-255範圍內
+                dstData[i] = Math.max(0, Math.min(255, r));
+                dstData[i + 1] = Math.max(0, Math.min(255, g));
+                dstData[i + 2] = Math.max(0, Math.min(255, b));
+                dstData[i + 3] = 255; // Alpha
+            }
+            filteredCtx.putImageData(dstImageData, 0, 0);
+        }
+        // 新增結束
+
+        // --- 銳化濾鏡的專門函式 ---
+        function applySharpenFilter() {
+            const width = originalCanvas.width;
+            const height = originalCanvas.height;
+            const src = new Uint8ClampedArray(originalImageData.data);
+            const dstData = filteredCtx.createImageData(width, height);
+            const dst = dstData.data;
+
+            const kernel = [
+                 0, -1,  0,
+                -1,  5, -1,
+                 0, -1,  0
+            ];
+            
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    let r = 0, g = 0, b = 0;
+
+                    for (let ky = -1; ky <= 1; ky++) {
+                        for (let kx = -1; kx <= 1; kx++) {
+                            const pixelY = y + ky;
+                            const pixelX = x + kx;
+                            const srcIdx = (pixelY * width + pixelX) * 4;
+
+                            const kernelIdx = (ky + 1) * 3 + (kx + 1);
+                            const kernelVal = kernel[kernelIdx];
+                            
+                            r += src[srcIdx] * kernelVal;
+                            g += src[srcIdx + 1] * kernelVal;
+                            b += src[srcIdx + 2] * kernelVal;
+                        }
+                    }
+
+                    const dstIdx = (y * width + x) * 4;
+                    dst[dstIdx] = Math.max(0, Math.min(255, r));
+                    dst[dstIdx + 1] = Math.max(0, Math.min(255, g));
+                    dst[dstIdx + 2] = Math.max(0, Math.min(255, b));
+                    dst[dstIdx + 3] = 255;
+                }
+            }
+            filteredCtx.putImageData(dstData, 0, 0);
+        }
+
+
         // --- 手繪風格濾鏡的專門函式 ---
         function applySketchFilter() {
             const width = originalCanvas.width;
             const height = originalCanvas.height;
 
-            // 1. 取得原始灰階數據
             const grayscaleData = new ImageData(width, height);
             const grayPixels = grayscaleData.data;
             for (let i = 0; i < originalImageData.data.length; i += 4) {
@@ -210,17 +328,14 @@
                 const b = originalImageData.data[i + 2];
                 const gray = 0.299 * r + 0.587 * g + 0.114 * b;
                 grayPixels[i] = grayPixels[i + 1] = grayPixels[i + 2] = gray;
-                grayPixels[i + 3] = 255; // Alpha
+                grayPixels[i + 3] = 255;
             }
 
-            // 2. 建立反轉並模糊的數據
-            // 建立一個離線的 canvas 來處理模糊
             const tempCanvas = document.createElement('canvas');
             const tempCtx = tempCanvas.getContext('2d');
             tempCanvas.width = width;
             tempCanvas.height = height;
 
-            // 2a. 取得反轉後的數據
             const invertedData = new ImageData(width, height);
             for (let i = 0; i < grayPixels.length; i += 4) {
                 invertedData.data[i] = 255 - grayPixels[i];
@@ -230,20 +345,16 @@
             }
             tempCtx.putImageData(invertedData, 0, 0);
 
-            // 2b. 進行高斯模糊
             tempCtx.filter = 'blur(8px)';
             tempCtx.drawImage(tempCanvas, 0, 0);
             const blurredInvertedData = tempCtx.getImageData(0, 0, width, height);
 
-            // 3. 顏色減淡混合 (Color Dodge)
             const finalImageData = filteredCtx.createImageData(width, height);
             const finalPixels = finalImageData.data;
             for (let i = 0; i < finalPixels.length; i += 4) {
                 const gray = grayPixels[i];
                 const blurred = blurredInvertedData.data[i];
                 
-                // 核心演算法：Color Dodge
-                // 如果底色(blurred)為全白(255)，結果也是全白
                 const dodge = (blurred === 255) ? 255 : Math.min(255, (gray * 255) / (255 - blurred));
                 
                 finalPixels[i] = dodge;
@@ -252,7 +363,6 @@
                 finalPixels[i + 3] = 255;
             }
 
-            // 4. 將最終結果繪製到畫布上
             filteredCtx.putImageData(finalImageData, 0, 0);
         }
     </script>

@@ -180,7 +180,7 @@
         const GRID_SIZE = 64; 
         const PROJECTIONS = 180;
         const ITERATIONS = 30;
-        // --- 新增：雜訊設定 ---
+        // --- 雜訊設定 ---
         // 嘗試調整此數值 (建議 0.5 ~ 3.0)，觀察對重建結果的影響
         const NOISE_LEVEL = 1.5;
 
@@ -200,7 +200,7 @@
         let phantomData, sinogramData, reconData;
         let projectionPaths = [];
         let animationFrameId;
-        // --- 新增：高斯雜訊生成器 ---
+        // --- 高斯雜訊生成器 ---
         let spareGaussian = null;
         function generateGaussianNoise(mean, stdDev) {
             if (spareGaussian !== null) {

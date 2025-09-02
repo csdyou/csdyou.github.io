@@ -80,10 +80,8 @@
         .filter-btn-reset:hover { background-color: #218838; }
         .filter-btn-sharpen { background-color: #17a2b8; }
         .filter-btn-sharpen:hover { background-color: #138496; }
-        /* 新增 */
-        .filter-btn-polaroid { background-color: #8D5A3C; } /* 拍立得棕色調 */
+        .filter-btn-polaroid { background-color: #8D5A3C; }
         .filter-btn-polaroid:hover { background-color: #7A4C30; }
-        /* 新增結束 */
     </style>
 </head>
 <body>
@@ -165,12 +163,10 @@
                 applySharpenFilter(); 
                 return;
             }
-            // 新增
             if (filter === 'polaroid') {
                 applyPolaroidVintageFilter();
                 return;
             }
-            // 新增結束
 
             const imageData = new ImageData(
                 new Uint8ClampedArray(originalImageData.data),
@@ -208,7 +204,7 @@
             filteredCtx.putImageData(imageData, 0, 0);
         }
 
-        // --- 新增: 立可拍復古濾鏡的專門函式 ---
+        // --- 立可拍復古濾鏡 ---
         function applyPolaroidVintageFilter() {
             const width = originalCanvas.width;
             const height = originalCanvas.height;
@@ -269,9 +265,7 @@
             }
             filteredCtx.putImageData(dstImageData, 0, 0);
         }
-        // 新增結束
-
-        // --- 銳化濾鏡的專門函式 ---
+        // --- 銳化濾鏡 ---
         function applySharpenFilter() {
             const width = originalCanvas.width;
             const height = originalCanvas.height;
@@ -315,7 +309,7 @@
         }
 
 
-        // --- 手繪風格濾鏡的專門函式 ---
+        // --- 手繪風格濾鏡 ---
         function applySketchFilter() {
             const width = originalCanvas.width;
             const height = originalCanvas.height;

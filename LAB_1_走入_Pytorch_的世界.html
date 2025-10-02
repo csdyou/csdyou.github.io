@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="LAB_1_走入_Pytorch_的世界_files/libs/clipboard/clipboard.min.js"></script>
+<script src="LAB_1_走入_Pytorch_的世界_files/libs/quarto-html/tabby.min.js"></script>
+<script src="LAB_1_走入_Pytorch_的世界_files/libs/quarto-html/popper.min.js"></script>
+<script src="LAB_1_走入_Pytorch_的世界_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="LAB_1_走入_Pytorch_的世界_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="LAB_1_走入_Pytorch_的世界_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="LAB_1_走入_Pytorch_的世界_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <title>走入 Pytorch 的世界</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/dist/theme/quarto-b5be6455b6a1abfc2ef890a5dde3b798.css">
+  <link href="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">走入 Pytorch 的世界</h1>
+
+<div class="quarto-title-authors">
+</div>
+
+</section>
+<section id="學習地圖" class="slide level2">
+<h2>學習地圖</h2>
+<p>我們將介紹 PyTorch，這篇筆記並非面面俱到。如果您有任何疑問， 文件和 Google 都是您的好幫手。</p>
+<ul>
+<li><p>PyTorch 基礎：張量、運算、NumPy 對照</p></li>
+<li><p>自動微分 (Autograd)：梯度計算的三種方法</p></li>
+<li><p>線性回歸：從數學公式到程式實作</p></li>
+<li><p>PyTorch 訓練骨架：<code>Forward</code> → <code>Loss</code> → <code>Backward</code> → <code>Update</code></p></li>
+<li><p>進一步延伸：用 <code>nn.Module</code>、<code>DataLoader</code>、<code>nn.Linear</code> 改寫</p></li>
+</ul>
+</section>
+<section id="匯入套件" class="slide level2">
+<h2>匯入套件</h2>
+<div id="cell-2" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href=""></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href=""></a></span>
+<span id="cb1-3"><a href=""></a><span class="im">import</span> torch</span>
+<span id="cb1-4"><a href=""></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
+<span id="cb1-5"><a href=""></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span>
+<span id="cb1-6"><a href=""></a></span>
+<span id="cb1-7"><a href=""></a><span class="co"># 匯入 3D 繪圖工具</span></span>
+<span id="cb1-8"><a href=""></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
+<span id="cb1-9"><a href=""></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-10"><a href=""></a></span>
+<span id="cb1-11"><a href=""></a><span class="co"># 設定隨機種子，確保結果可重現 (PyTorch 與 NumPy 各自獨立)</span></span>
+<span id="cb1-12"><a href=""></a>torch.manual_seed(<span class="dv">446</span>)</span>
+<span id="cb1-13"><a href=""></a>np.random.seed(<span class="dv">446</span>)</span>
+<span id="cb1-14"><a href=""></a></span>
+<span id="cb1-15"><a href=""></a><span class="co"># 自動判斷裝置是否有支援 GPU，如果有就使用 CUDA，否則使用 CPU</span></span>
+<span id="cb1-16"><a href=""></a>device <span class="op">=</span> torch.device(<span class="st">"cuda:0"</span> <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="st">"cpu"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="61a7163c-79a8-4994-b214-40af4182dfc9" data-execution_count="2">
+<div class="cell-output cell-output-stdout">
+<pre><code>Pytorch 版本:  2.7.1
+CUDA 版本:  None
+cuDNN 版本:  None
+是否支援 CUDA:  False</code></pre>
+</div>
+</div>
+</section>
+<section id="張量tensor與-numpy-的關係" class="slide level2">
+<h2>張量（Tensor）與 NumPy 的關係</h2>
+<p>在科學計算中，<strong>PyTorch</strong> 可以視為與 <strong>NumPy</strong> 類似的套件，它同樣提供高效的矩陣與數值運算功能。不同的是，PyTorch 的基本資料結構是 <strong>張量（Tensor）</strong>，而 NumPy 的基本資料結構是 <strong>多維陣列（ndarray）</strong>。</p>
+<p>在概念上，PyTorch 的張量就像是延伸版的 NumPy 陣列，並且支援 GPU 加速與自動微分。</p>
+</section>
+<section id="張量的階數rank" class="slide level2">
+<h2>張量的階數（Rank）</h2>
+<p>張量可以被視為一種「多階（rank）數組」，對應數學中不同的資料形式：</p>
+<ul>
+<li><strong>純量（Scalar，0 階張量）</strong>：單一數值，例如 <code>1</code>、<code>2.5</code>、<code>13/6</code><br>
+</li>
+<li><strong>向量（Vector，1 階張量）</strong>：一維數列，例如 <code>[1, 0]</code>、<code>[1, 1, 2.5, 3.4]</code><br>
+</li>
+<li><strong>矩陣（Matrix，2 階張量）</strong>：二維數列，例如 <code>[[1, 5], [3, 5]]</code><br>
+</li>
+<li><strong>高階張量（Tensor，rank &gt; 2）</strong>：更高維度的資料結構，例如三維的影像資料或四維的影片資料</li>
+</ul>
+<p align="center">
+<img src="https://drek4537l1klr.cloudfront.net/cai/HighResolutionFigures/figure_B-1.png" width="400" height="300">
+</p>
+<blockquote>
+<p>圖片來源：<a href="https://livebook.manning.com/book/deep-learning-with-javascript">Deep Learning with JavaScript, Manning Publications</a></p>
+</blockquote>
+</section>
+<section class="slide level2">
+
+<div id="cell-5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="70f8c068-753b-4695-936a-a5248fbe55b0" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-2"><a href=""></a><span class="co"># 1. 純量 (Scalar)</span></span>
+<span id="cb3-3"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-4"><a href=""></a><span class="bu">print</span>(<span class="st">"=== Scalar (純量) ==="</span>)</span>
+<span id="cb3-5"><a href=""></a>a_py <span class="op">=</span> <span class="fl">1.3</span>   <span class="co"># 使用 Python 定義純量</span></span>
+<span id="cb3-6"><a href=""></a><span class="bu">print</span>(<span class="st">"Python scalar:"</span>, a_py)</span>
+<span id="cb3-7"><a href=""></a></span>
+<span id="cb3-8"><a href=""></a>a_torch <span class="op">=</span> torch.tensor(<span class="fl">1.3</span>)  <span class="co"># 使用 PyTorch 定義純量</span></span>
+<span id="cb3-9"><a href=""></a><span class="bu">print</span>(<span class="st">"Torch scalar:"</span>, a_torch)</span>
+<span id="cb3-10"><a href=""></a><span class="bu">print</span>()</span>
+<span id="cb3-11"><a href=""></a></span>
+<span id="cb3-12"><a href=""></a></span>
+<span id="cb3-13"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-14"><a href=""></a><span class="co"># 2. 向量 (Vector) 與 NumPy / PyTorch 的比較</span></span>
+<span id="cb3-15"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-16"><a href=""></a><span class="bu">print</span>(<span class="st">"=== Vector (向量) ==="</span>)</span>
+<span id="cb3-17"><a href=""></a>x_numpy <span class="op">=</span> np.array([<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>])          <span class="co"># NumPy 定義向量</span></span>
+<span id="cb3-18"><a href=""></a>x_torch <span class="op">=</span> torch.tensor([<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>])      <span class="co"># PyTorch 定義向量</span></span>
+<span id="cb3-19"><a href=""></a><span class="bu">print</span>(<span class="st">"NumPy vector:"</span>, x_numpy)</span>
+<span id="cb3-20"><a href=""></a><span class="bu">print</span>(<span class="st">"Torch vector:"</span>, x_torch)</span>
+<span id="cb3-21"><a href=""></a><span class="bu">print</span>()</span>
+<span id="cb3-22"><a href=""></a></span>
+<span id="cb3-23"><a href=""></a></span>
+<span id="cb3-24"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-25"><a href=""></a><span class="co"># 3. NumPy 與 PyTorch 的轉換</span></span>
+<span id="cb3-26"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-27"><a href=""></a><span class="bu">print</span>(<span class="st">"=== NumPy ↔ PyTorch 轉換 ==="</span>)</span>
+<span id="cb3-28"><a href=""></a><span class="bu">print</span>(<span class="st">"From NumPy to Torch:"</span>, torch.from_numpy(x_numpy))</span>
+<span id="cb3-29"><a href=""></a><span class="bu">print</span>(<span class="st">"From Torch to NumPy:"</span>, x_torch.numpy())</span>
+<span id="cb3-30"><a href=""></a><span class="bu">print</span>()</span>
+<span id="cb3-31"><a href=""></a></span>
+<span id="cb3-32"><a href=""></a></span>
+<span id="cb3-33"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-34"><a href=""></a><span class="co"># 4. 常見函數 (Functions)</span></span>
+<span id="cb3-35"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-36"><a href=""></a><span class="bu">print</span>(<span class="st">"=== 常見函數 ==="</span>)</span>
+<span id="cb3-37"><a href=""></a><span class="bu">print</span>(<span class="st">"Norm (NumPy):"</span>, np.linalg.norm(x_numpy))</span>
+<span id="cb3-38"><a href=""></a><span class="bu">print</span>(<span class="st">"Norm (Torch):"</span>, torch.norm(x_torch))</span>
+<span id="cb3-39"><a href=""></a><span class="bu">print</span>()</span>
+<span id="cb3-40"><a href=""></a></span>
+<span id="cb3-41"><a href=""></a></span>
+<span id="cb3-42"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-43"><a href=""></a><span class="co"># 5. 建立不同維度的張量</span></span>
+<span id="cb3-44"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb3-45"><a href=""></a><span class="bu">print</span>(<span class="st">"=== 不同維度的張量 ==="</span>)</span>
+<span id="cb3-46"><a href=""></a></span>
+<span id="cb3-47"><a href=""></a><span class="co"># (0 階) 純量</span></span>
+<span id="cb3-48"><a href=""></a>a <span class="op">=</span> torch.rand(<span class="dv">1</span>)</span>
+<span id="cb3-49"><a href=""></a><span class="bu">print</span>(<span class="st">"0D Scalar (隨機數):</span><span class="ch">\n</span><span class="st">"</span>, a)</span>
+<span id="cb3-50"><a href=""></a></span>
+<span id="cb3-51"><a href=""></a><span class="co"># (1 階) 向量</span></span>
+<span id="cb3-52"><a href=""></a>b <span class="op">=</span> torch.zeros((<span class="dv">2</span>,))</span>
+<span id="cb3-53"><a href=""></a><span class="bu">print</span>(<span class="st">"1D Vector (零向量):</span><span class="ch">\n</span><span class="st">"</span>, b)</span>
+<span id="cb3-54"><a href=""></a></span>
+<span id="cb3-55"><a href=""></a><span class="co"># (2 階) 矩陣</span></span>
+<span id="cb3-56"><a href=""></a>c <span class="op">=</span> torch.tensor([[<span class="fl">2.0</span>], [<span class="fl">4.0</span>]])</span>
+<span id="cb3-57"><a href=""></a><span class="bu">print</span>(<span class="st">"2D Column Vector (行向量):</span><span class="ch">\n</span><span class="st">"</span>, c)</span>
+<span id="cb3-58"><a href=""></a></span>
+<span id="cb3-59"><a href=""></a>A <span class="op">=</span> torch.tensor([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">3.</span>, <span class="fl">4.</span>]])</span>
+<span id="cb3-60"><a href=""></a><span class="bu">print</span>(<span class="st">"2D Matrix (矩陣):</span><span class="ch">\n</span><span class="st">"</span>, A)</span>
+<span id="cb3-61"><a href=""></a></span>
+<span id="cb3-62"><a href=""></a><span class="co"># (3 階) 三維張量</span></span>
+<span id="cb3-63"><a href=""></a>B <span class="op">=</span> torch.tensor([[[<span class="dv">1</span>,<span class="dv">2</span>],[<span class="dv">3</span>,<span class="dv">4</span>]], [[<span class="dv">5</span>,<span class="dv">6</span>],[<span class="dv">7</span>,<span class="dv">8</span>]]])</span>
+<span id="cb3-64"><a href=""></a><span class="bu">print</span>(<span class="st">"3D Tensor:</span><span class="ch">\n</span><span class="st">"</span>, B)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== Scalar (純量) ===
+Python scalar: 1.3
+Torch scalar: tensor(1.3000)
+
+=== Vector (向量) ===
+NumPy vector: [0.1 0.2 0.3]
+Torch vector: tensor([0.1000, 0.2000, 0.3000])
+
+=== NumPy ↔ PyTorch 轉換 ===
+From NumPy to Torch: tensor([0.1000, 0.2000, 0.3000], dtype=torch.float64)
+From Torch to NumPy: [0.1 0.2 0.3]
+
+=== 常見函數 ===
+Norm (NumPy): 0.37416573867739417
+Norm (Torch): tensor(0.3742)
+
+=== 不同維度的張量 ===
+0D Scalar (隨機數):
+ tensor([0.2010])
+1D Vector (零向量):
+ tensor([0., 0.])
+2D Column Vector (行向量):
+ tensor([[2.],
+        [4.]])
+2D Matrix (矩陣):
+ tensor([[1., 2.],
+        [3., 4.]])
+3D Tensor:
+ tensor([[[1, 2],
+         [3, 4]],
+
+        [[5, 6],
+         [7, 8]]])</code></pre>
+</div>
+</div>
+</section>
+<section id="python-list-vs-numpy-ndarray-vs-pytorch-tensor" class="slide level2">
+<h2>Python List vs NumPy ndarray vs PyTorch Tensor</h2>
+<table class="caption-top" style="width:100%;">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 24%">
+<col style="width: 19%">
+<col style="width: 17%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>類型</th>
+<th>數學概念</th>
+<th>Python</th>
+<th>NumPy</th>
+<th>PyTorch</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>純量 (Scalar, 0D)</strong></td>
+<td>單一數值</td>
+<td><code>a = 1.3</code></td>
+<td><code>a_np = np.array(1.3)</code></td>
+<td><code>a_torch = torch.tensor(1.3)</code></td>
+</tr>
+<tr class="even">
+<td><strong>向量 (Vector, 1D)</strong></td>
+<td>一維陣列</td>
+<td><code>v = [1, 2, 3]</code></td>
+<td><code>v_np = np.array([1, 2, 3])</code></td>
+<td><code>v_torch = torch.tensor([1, 2, 3])</code></td>
+</tr>
+<tr class="odd">
+<td><strong>矩陣 (Matrix, 2D)</strong></td>
+<td>二維陣列</td>
+<td><code>M = [[1, 2], [3, 4]]</code></td>
+<td><code>M_np = np.array([[1, 2], [3, 4]])</code></td>
+<td><code>M_torch = torch.tensor([[1, 2], [3, 4]])</code></td>
+</tr>
+<tr class="even">
+<td><strong>高階張量 (Tensor, 3D 以上)</strong></td>
+<td>多維陣列</td>
+<td><code>[[[1,2],[3,4]], [[5,6],[7,8]]]</code></td>
+<td><code>T_np = np.array([[[1,2],[3,4]], [[5,6],[7,8]]])</code></td>
+<td><code>T_torch = torch.tensor([[[1,2],[3,4]], [[5,6],[7,8]]])</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<table class="caption-top" style="width:100%;">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>資料結構</th>
+<th>本質</th>
+<th>是否有 Shape</th>
+<th>是否有 Dtype</th>
+<th>適合數學運算</th>
+<th>額外功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Python list</strong></td>
+<td>任意物件的集合 (巢狀可模擬多維)</td>
+<td>❌ 沒有 <code>.shape</code></td>
+<td>❌ 沒有 <code>.dtype</code></td>
+<td>❌ 不適合</td>
+<td>無</td>
+</tr>
+<tr class="even">
+<td><strong>NumPy ndarray</strong></td>
+<td>規則的多維陣列</td>
+<td>✅ <code>.shape</code></td>
+<td>✅ <code>.dtype</code></td>
+<td>✅ 適合</td>
+<td>提供大量數值運算函數</td>
+</tr>
+<tr class="odd">
+<td><strong>PyTorch Tensor</strong></td>
+<td>規則的多維陣列 (深度學習優化)</td>
+<td>✅ <code>.shape</code></td>
+<td>✅ <code>.dtype</code></td>
+<td>✅ 適合</td>
+<td>GPU 加速、自動微分</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="張量的重要屬性" class="slide level2 scrollable">
+<h2>張量的重要屬性</h2>
+<p>在 <strong>PyTorch</strong> 中，張量（Tensor）有三個最重要的屬性：</p>
+<ol type="1">
+<li><strong>形狀 (Shape)</strong>
+<ul>
+<li>張量的維度與大小<br>
+</li>
+<li>對應屬性：<code>.shape</code></li>
+</ul></li>
+<li><strong>型別 (Dtype)</strong>
+<ul>
+<li>張量內部數值的資料型態，例如 <code>float32</code>、<code>int64</code><br>
+</li>
+<li>對應屬性：<code>.dtype</code></li>
+</ul></li>
+<li><strong>值 (Value)</strong>
+<ul>
+<li>張量實際存放的數值<br>
+</li>
+<li>可以直接印出，或使用 <code>.numpy()</code> 方法轉換為 NumPy 陣列後查看</li>
+</ul></li>
+</ol>
+<div id="cell-8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="3f77fb7c-411f-4a0f-d0e7-4cd3f0381418" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="co"># 查看矩陣A的形狀、類型和值</span></span>
+<span id="cb5-2"><a href=""></a><span class="bu">print</span>(A.shape)      <span class="co"># 輸出(2, 2)，即矩陣的長和寬均為2</span></span>
+<span id="cb5-3"><a href=""></a><span class="bu">print</span>(A.dtype)      <span class="co"># 輸出&lt;dtype: 'float64'&gt;</span></span>
+<span id="cb5-4"><a href=""></a></span>
+<span id="cb5-5"><a href=""></a><span class="co"># 張量的 numpy() 方法是將張量的值轉換為一個 NumPy 數組。</span></span>
+<span id="cb5-6"><a href=""></a><span class="bu">print</span>(A.numpy())    <span class="co"># 輸出[[1. 2.]</span></span>
+<span id="cb5-7"><a href=""></a>                    <span class="co">#      [3. 4.]]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>torch.Size([2, 2])
+torch.float32
+[[1. 2.]
+ [3. 4.]]</code></pre>
+</div>
+</div>
+</section>
+<section id="張量的重塑-reshape" class="slide level2">
+<h2>張量的重塑 (Reshape)</h2>
+<p>在 <strong>PyTorch</strong> 中，我們可以使用 <code>Tensor.view()</code> 方法來 <strong>重塑張量 (reshape)</strong>，其功能類似於 NumPy 的 <code>reshape()</code>。</p>
+<h3 id="使用方式">使用方式</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href=""></a>Y <span class="op">=</span> X.view(new_shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section class="slide level2">
+
+<div id="cell-10" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="b724bcdc-73bd-4631-cc5d-73a0694f5c06" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb8-2"><a href=""></a><span class="co"># Example 1</span></span>
+<span id="cb8-3"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb8-4"><a href=""></a><span class="bu">print</span>(<span class="st">"=== Example 1 ==="</span>)</span>
+<span id="cb8-5"><a href=""></a></span>
+<span id="cb8-6"><a href=""></a><span class="co"># 建立一個 2x3 的張量</span></span>
+<span id="cb8-7"><a href=""></a>X <span class="op">=</span> torch.tensor([[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>],</span>
+<span id="cb8-8"><a href=""></a>                  [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]])</span>
+<span id="cb8-9"><a href=""></a></span>
+<span id="cb8-10"><a href=""></a><span class="bu">print</span>(<span class="st">"原始張量 X:"</span>)</span>
+<span id="cb8-11"><a href=""></a><span class="bu">print</span>(X)</span>
+<span id="cb8-12"><a href=""></a><span class="bu">print</span>(<span class="st">"Shape:"</span>, X.shape)</span>
+<span id="cb8-13"><a href=""></a></span>
+<span id="cb8-14"><a href=""></a><span class="co"># 重塑為 3x2</span></span>
+<span id="cb8-15"><a href=""></a>Y <span class="op">=</span> X.view(<span class="dv">3</span>, <span class="dv">2</span>)</span>
+<span id="cb8-16"><a href=""></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">重塑後 Y (3x2):"</span>)</span>
+<span id="cb8-17"><a href=""></a><span class="bu">print</span>(Y)</span>
+<span id="cb8-18"><a href=""></a><span class="bu">print</span>(<span class="st">"Shape:"</span>, Y.shape)</span>
+<span id="cb8-19"><a href=""></a></span>
+<span id="cb8-20"><a href=""></a><span class="co"># 使用 -1 自動推斷</span></span>
+<span id="cb8-21"><a href=""></a>Z <span class="op">=</span> X.view(<span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>)  <span class="co"># 自動計算出 (3, 2)</span></span>
+<span id="cb8-22"><a href=""></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">自動推斷 Z (-1, 2):"</span>)</span>
+<span id="cb8-23"><a href=""></a><span class="bu">print</span>(Z)</span>
+<span id="cb8-24"><a href=""></a><span class="bu">print</span>(<span class="st">"Shape:"</span>, Z.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== Example 1 ===
+原始張量 X:
+tensor([[1, 2, 3],
+        [4, 5, 6]])
+Shape: torch.Size([2, 3])
+
+重塑後 Y (3x2):
+tensor([[1, 2],
+        [3, 4],
+        [5, 6]])
+Shape: torch.Size([3, 2])
+
+自動推斷 Z (-1, 2):
+tensor([[1, 2],
+        [3, 4],
+        [5, 6]])
+Shape: torch.Size([3, 2])</code></pre>
+</div>
+</div>
+<div id="cell-11" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="6bc652d1-5df1-4854-a765-4ffc65e954ba" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb10-2"><a href=""></a><span class="co"># Example 2</span></span>
+<span id="cb10-3"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb10-4"><a href=""></a><span class="bu">print</span>(<span class="st">"=== Example 2 ==="</span>)</span>
+<span id="cb10-5"><a href=""></a></span>
+<span id="cb10-6"><a href=""></a><span class="co"># 假設我們有 10000 張 3x28x28 的影像 (NCHW 格式)</span></span>
+<span id="cb10-7"><a href=""></a>N, C, W, H <span class="op">=</span> <span class="dv">10000</span>, <span class="dv">3</span>, <span class="dv">28</span>, <span class="dv">28</span></span>
+<span id="cb10-8"><a href=""></a>X <span class="op">=</span> torch.randn((N, C, W, H))  <span class="co"># [批次大小, 通道數, 寬, 高]</span></span>
+<span id="cb10-9"><a href=""></a></span>
+<span id="cb10-10"><a href=""></a><span class="bu">print</span>(<span class="st">"原始張量 X 的形狀:"</span>)</span>
+<span id="cb10-11"><a href=""></a><span class="bu">print</span>(X.shape)   <span class="co"># (10000, 3, 28, 28)</span></span>
+<span id="cb10-12"><a href=""></a></span>
+<span id="cb10-13"><a href=""></a><span class="co"># 將影像展平成 (784 = 28*28)</span></span>
+<span id="cb10-14"><a href=""></a>X_flat <span class="op">=</span> X.view(N, C, <span class="dv">784</span>)</span>
+<span id="cb10-15"><a href=""></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">展平成 (N, C, 784):"</span>)</span>
+<span id="cb10-16"><a href=""></a><span class="bu">print</span>(X_flat.shape)  <span class="co"># (10000, 3, 784)</span></span>
+<span id="cb10-17"><a href=""></a></span>
+<span id="cb10-18"><a href=""></a><span class="co"># 使用 -1 自動推斷批次大小</span></span>
+<span id="cb10-19"><a href=""></a>X_auto <span class="op">=</span> X.view(<span class="op">-</span><span class="dv">1</span>, C, <span class="dv">784</span>)</span>
+<span id="cb10-20"><a href=""></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">自動推斷批次大小 (-1, C, 784):"</span>)</span>
+<span id="cb10-21"><a href=""></a><span class="bu">print</span>(X_auto.shape)  <span class="co"># (10000, 3, 784)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== Example 2 ===
+原始張量 X 的形狀:
+torch.Size([10000, 3, 28, 28])
+
+展平成 (N, C, 784):
+torch.Size([10000, 3, 784])
+
+自動推斷批次大小 (-1, C, 784):
+torch.Size([10000, 3, 784])</code></pre>
+</div>
+</div>
+</section>
+<section id="pytorch-是一台計算機" class="slide level2">
+<h2>PyTorch 是一台計算機</h2>
+<p>在 <strong>PyTorch</strong> 中，我們可以透過各種運算 (Operations) 來處理張量。<br>
+給定兩個矩陣 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(B\)</span>：</p>
+<p><span class="math display">\[
+A = \begin{bmatrix} 1 &amp; 2 \\ 3 &amp; 4 \end{bmatrix}, \qquad
+B = \begin{bmatrix} 5 &amp; 6 \\ 7 &amp; 8 \end{bmatrix}
+\]</span></p>
+<p>我們來試試 <strong>矩陣加法</strong>與<strong>矩陣乘法</strong>。</p>
+<div id="cell-13" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="8f641245-a660-4217-978b-39ea02642314" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href=""></a><span class="co"># 定義兩個 2x2 矩陣</span></span>
+<span id="cb12-2"><a href=""></a>A <span class="op">=</span> torch.tensor([[<span class="fl">1.0</span>, <span class="fl">2.0</span>],</span>
+<span id="cb12-3"><a href=""></a>                  [<span class="fl">3.0</span>, <span class="fl">4.0</span>]])</span>
+<span id="cb12-4"><a href=""></a></span>
+<span id="cb12-5"><a href=""></a>B <span class="op">=</span> torch.tensor([[<span class="fl">5.0</span>, <span class="fl">6.0</span>],</span>
+<span id="cb12-6"><a href=""></a>                  [<span class="fl">7.0</span>, <span class="fl">8.0</span>]])</span>
+<span id="cb12-7"><a href=""></a></span>
+<span id="cb12-8"><a href=""></a><span class="co"># 1. 矩陣加法</span></span>
+<span id="cb12-9"><a href=""></a>C <span class="op">=</span> A <span class="op">+</span> B   <span class="co"># 或 torch.add(A, B)</span></span>
+<span id="cb12-10"><a href=""></a><span class="bu">print</span>(<span class="st">"C = A + B:</span><span class="ch">\n</span><span class="st">"</span>, C)</span>
+<span id="cb12-11"><a href=""></a></span>
+<span id="cb12-12"><a href=""></a><span class="co"># 2. 元素相乘 (Hadamard product)</span></span>
+<span id="cb12-13"><a href=""></a>D_elementwise <span class="op">=</span> A <span class="op">*</span> B</span>
+<span id="cb12-14"><a href=""></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">D = A * B (Element-wise):</span><span class="ch">\n</span><span class="st">"</span>, D_elementwise)</span>
+<span id="cb12-15"><a href=""></a></span>
+<span id="cb12-16"><a href=""></a><span class="co"># 上面的做法其實是計算矩陣 element-wise 的乘法 (又叫 Hadamard product)</span></span>
+<span id="cb12-17"><a href=""></a><span class="co"># https://en.wikipedia.org/wiki/Hadamard_product_(matrices)</span></span>
+<span id="cb12-18"><a href=""></a></span>
+<span id="cb12-19"><a href=""></a></span>
+<span id="cb12-20"><a href=""></a><span class="co"># 3. 矩陣乘法 (Matrix multiplication)</span></span>
+<span id="cb12-21"><a href=""></a>D_matmul <span class="op">=</span> A <span class="op">@</span> B    <span class="co"># 或 torch.matmul(A, B)</span></span>
+<span id="cb12-22"><a href=""></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">D = A @ B (Matrix Multiplication):</span><span class="ch">\n</span><span class="st">"</span>, D_matmul)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>C = A + B:
+ tensor([[ 6.,  8.],
+        [10., 12.]])
+
+D = A * B (Element-wise):
+ tensor([[ 5., 12.],
+        [21., 32.]])
+
+D = A @ B (Matrix Multiplication):
+ tensor([[19., 22.],
+        [43., 50.]])</code></pre>
+</div>
+</div>
+</section>
+<section id="自動微分-automatic-differentiation" class="slide level2">
+<h2>自動微分 (Automatic Differentiation)</h2>
+<p>在機器/深度學習中，我們經常需要計算函數的導數。<br>
+PyTorch 提供了強大的 <strong>自動微分 (autograd)</strong> 功能，可以自動追蹤計算圖並計算梯度。</p>
+<h3 id="範例-1單變數函數的導數">範例 1：單變數函數的導數</h3>
+<p>考慮函數：</p>
+<p><span class="math display">\[
+y = f(x) = x^2 + x + 4
+\]</span></p>
+<p>在 <span class="math inline">\(x = 3\)</span> 時，導數為：</p>
+<p><span class="math display">\[
+f'(x) = 2x + 1, \quad f'(3) = 7
+\]</span></p>
+<div id="cell-16" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="0d19c33a-8019-4d8c-d8a2-e34c0b09a72e" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href=""></a><span class="co"># 定義變數 (需要微分); 對要微分的變數需要求 requires_grad=True，Pytorch 會自動追蹤由 x 到目標函數之間的所有運算</span></span>
+<span id="cb14-2"><a href=""></a>x <span class="op">=</span> torch.tensor(<span class="fl">3.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-3"><a href=""></a></span>
+<span id="cb14-4"><a href=""></a><span class="co"># 定義函數 y = x^2 + x + 4</span></span>
+<span id="cb14-5"><a href=""></a>y <span class="op">=</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> x <span class="op">+</span> <span class="dv">4</span></span>
+<span id="cb14-6"><a href=""></a></span>
+<span id="cb14-7"><a href=""></a><span class="co"># 計算 dy/dx</span></span>
+<span id="cb14-8"><a href=""></a>dydx <span class="op">=</span> torch.autograd.grad(y, x)[<span class="dv">0</span>]</span>
+<span id="cb14-9"><a href=""></a></span>
+<span id="cb14-10"><a href=""></a><span class="bu">print</span>(<span class="st">"y ="</span>, y.item())      <span class="co"># f(3) = 16</span></span>
+<span id="cb14-11"><a href=""></a><span class="bu">print</span>(<span class="st">"dy/dx ="</span>, dydx.item())  <span class="co"># f'(3) = 7</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>y = 16.0
+dy/dx = 7.0</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="範例-2多變數函數的偏導數">範例 2：多變數函數的偏導數</h3>
+<p>考慮函數：</p>
+<p><span class="math display">\[
+L(w, b) = \| Xw + b - y \|^2
+\]</span></p>
+<p>其中</p>
+<p><span class="math display">\[
+X = \begin{bmatrix} 1.0 &amp; 2.0 \\ 3.0 &amp; 4.0 \end{bmatrix}, \quad
+y = \begin{bmatrix} 1.0 \\ 2.0 \end{bmatrix}, \quad
+w = \begin{bmatrix} 1.0 \\ 2.0 \end{bmatrix}, \quad
+b = 1.0
+\]</span></p>
+<p>我們要求：</p>
+<p><span class="math display">\[
+\frac{\partial L}{\partial w}, \quad \frac{\partial L}{\partial b}
+\]</span></p>
+<div id="cell-18" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="3104dd5b-1eb3-4de1-ed8b-b3b036d355a6" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href=""></a><span class="co"># 定義常數</span></span>
+<span id="cb16-2"><a href=""></a>X <span class="op">=</span> torch.tensor([[<span class="fl">1.0</span>, <span class="fl">2.0</span>],</span>
+<span id="cb16-3"><a href=""></a>                  [<span class="fl">3.0</span>, <span class="fl">4.0</span>]])</span>
+<span id="cb16-4"><a href=""></a>y <span class="op">=</span> torch.tensor([[<span class="fl">1.0</span>], [<span class="fl">2.0</span>]])</span>
+<span id="cb16-5"><a href=""></a></span>
+<span id="cb16-6"><a href=""></a><span class="co"># 定義變數 (需要被微分)</span></span>
+<span id="cb16-7"><a href=""></a>w <span class="op">=</span> torch.tensor([[<span class="fl">1.0</span>], [<span class="fl">2.0</span>]], requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-8"><a href=""></a>b <span class="op">=</span> torch.tensor([<span class="fl">1.0</span>], requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-9"><a href=""></a></span>
+<span id="cb16-10"><a href=""></a>error <span class="op">=</span> X <span class="op">@</span> w <span class="op">+</span> b <span class="op">-</span> y</span>
+<span id="cb16-11"><a href=""></a>loss <span class="op">=</span> (error <span class="op">**</span> <span class="dv">2</span>).<span class="bu">sum</span>()</span>
+<span id="cb16-12"><a href=""></a>dw, db <span class="op">=</span> torch.autograd.grad(loss, [w, b])</span>
+<span id="cb16-13"><a href=""></a><span class="bu">print</span>(<span class="st">'L = '</span>, loss)</span>
+<span id="cb16-14"><a href=""></a><span class="bu">print</span>(<span class="st">'dw = '</span>, dw)</span>
+<span id="cb16-15"><a href=""></a><span class="bu">print</span>(<span class="st">'db = '</span>, db)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>L =  tensor(125., grad_fn=&lt;SumBackward0&gt;)
+dw =  tensor([[ 70.],
+        [100.]])
+db =  tensor([30.])</code></pre>
+</div>
+</div>
+<p>從輸出可見，Pytorch 幫助我們計算出了</p>
+<p><span class="math display">\[\begin{align*}
+    &amp;L((1.0, 2.0)^{\top}, 1) = 125 \\
+    &amp;\dfrac{\partial L}{\partial w}\Big|_{w=(1.0, 2.0)^{\top},\ b = 1.0}
+    = \begin{bmatrix} 70 \\ 100 \end{bmatrix} \\
+    &amp;\dfrac{\partial L}{\partial b}\Big|_{w=(1.0, 2.0)^{\top},\ b = 1.0} = 30\\
+\end{align*}\]</span></p>
+</section>
+<section id="線性回歸與梯度下降法" class="slide level2">
+<h2>線性回歸與梯度下降法</h2>
+<p>接下來將理解如何使用 <strong>梯度下降法 (Gradient Descent)</strong> 來求解線性回歸問題，並使用 NumPy 和 Pytorch 實作。</p>
+<ul>
+<li>線性回歸是最簡單的「深度學習模型」。<br>
+</li>
+<li>梯度下降法是從這個範例推廣到更複雜模型（如神經網路）的基礎。</li>
+</ul>
+</section>
+<section id="線性回歸模型" class="slide level2">
+<h2>線性回歸模型</h2>
+<p>給定一組資料點 <span class="math inline">\((x_i, y_i)\)</span>，我們希望找到一條直線：</p>
+<p><span class="math display">\[y = ax + b\]</span></p>
+<p>使得預測值與真實值之間的誤差最小。</p>
+<h3 id="損失函數-loss-function">損失函數 (Loss Function)</h3>
+<p>我們使用 <strong>均方誤差 (Mean Squared Error, MSE)</strong> 作為損失函數：</p>
+<p><span class="math display">\[L(a, b) = \frac{1}{2N}\sum_{i=1}^{N}(\hat{y}_{i} - y_i)^2 = \frac{1}{2N}\sum_{i=1}^{N}(ax_i + b - y_i)^2\]</span></p>
+</section>
+<section class="slide level2 scrollable">
+
+<h3 id="梯度下降法原理">梯度下降法原理</h3>
+<p>梯度下降法是一種<strong>迭代演算法</strong>，透過不斷調整參數來最小化損失函數。</p>
+<h4 id="更新規則">更新規則</h4>
+<ol type="1">
+<li><strong>計算梯度</strong>（損失函數對參數的偏微分）：</li>
+</ol>
+<p><span class="math display">\[\frac{\partial L}{\partial a} = \frac{1}{N}\sum_{i=1}^{N}(ax_i + b - y_i) \cdot x_i\]</span></p>
+<p><span class="math display">\[\frac{\partial L}{\partial b} = \frac{1}{N}\sum_{i=1}^{N}(ax_i + b - y_i)\]</span></p>
+<ol start="2" type="1">
+<li><strong>更新參數</strong>（沿著梯度的反方向移動）：</li>
+</ol>
+<p><span class="math display">\[a_{new} = a_{old} - \alpha \cdot \frac{\partial L}{\partial a}\]</span></p>
+<p><span class="math display">\[b_{new} = b_{old} - \alpha \cdot \frac{\partial L}{\partial b}\]</span></p>
+<p>其中 <span class="math inline">\(\alpha\)</span> 是<strong>學習率 (Learning Rate)</strong>，控制每次更新的步伐大小。</p>
+</section>
+<section class="slide level2">
+
+<h4 id="向量化計算">向量化計算</h4>
+<ul>
+<li><code>(y_pred - y).dot(x)</code> 等同於 <span class="math inline">\(\sum_{i=1}^{n}(\hat{y}_{i} - y_i) \cdot x_i\)</span></li>
+</ul>
+<h3 id="線性回歸有解析解正規方程">線性回歸有解析解（正規方程）：</h3>
+<p><span class="math display">\[\mathbf{w} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}\]</span></p>
+<ul>
+<li><strong>優點</strong>：一步求解，不需調參</li>
+<li><strong>缺點</strong>：當特徵數量很大時，矩陣運算成本高</li>
+</ul>
+<p>梯度下降法在大規模資料集上更有效率！</p>
+</section>
+<section class="slide level2">
+
+<div id="cell-22" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:1000}}" data-outputid="024c7238-80bd-4449-87bc-de3ea01ac95d" data-fig-width="10" data-fig-height="6" data-fig-dpi="150" data-fig-format="svg" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-2"><a href=""></a><span class="co"># Step 1: 生成訓練資料</span></span>
+<span id="cb18-3"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-4"><a href=""></a>n_samples <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb18-5"><a href=""></a></span>
+<span id="cb18-6"><a href=""></a><span class="co"># 真實參數</span></span>
+<span id="cb18-7"><a href=""></a>true_a <span class="op">=</span> <span class="fl">3.0</span></span>
+<span id="cb18-8"><a href=""></a>true_b <span class="op">=</span> <span class="fl">2.0</span></span>
+<span id="cb18-9"><a href=""></a></span>
+<span id="cb18-10"><a href=""></a><span class="co"># 生成資料</span></span>
+<span id="cb18-11"><a href=""></a>x <span class="op">=</span> np.random.rand(n_samples) <span class="op">*</span> <span class="dv">10</span></span>
+<span id="cb18-12"><a href=""></a>y <span class="op">=</span> true_a <span class="op">*</span> x <span class="op">+</span> true_b <span class="op">+</span> np.random.randn(n_samples) <span class="op">*</span> <span class="dv">2</span></span>
+<span id="cb18-13"><a href=""></a></span>
+<span id="cb18-14"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-15"><a href=""></a><span class="co"># Step 2: 初始化參數</span></span>
+<span id="cb18-16"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-17"><a href=""></a>a <span class="op">=</span> <span class="fl">0.0</span>  <span class="co"># 斜率</span></span>
+<span id="cb18-18"><a href=""></a>b <span class="op">=</span> <span class="fl">0.0</span>  <span class="co"># 截距</span></span>
+<span id="cb18-19"><a href=""></a></span>
+<span id="cb18-20"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-21"><a href=""></a><span class="co"># Step 3: 設定超參數</span></span>
+<span id="cb18-22"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-23"><a href=""></a>num_iter <span class="op">=</span> <span class="dv">10000</span>        <span class="co"># 迭代次數</span></span>
+<span id="cb18-24"><a href=""></a>learning_rate <span class="op">=</span> <span class="fl">5e-4</span>    <span class="co"># 學習率</span></span>
+<span id="cb18-25"><a href=""></a>n_samples <span class="op">=</span> <span class="bu">len</span>(x)      <span class="co"># 樣本數量</span></span>
+<span id="cb18-26"><a href=""></a></span>
+<span id="cb18-27"><a href=""></a>loss_history <span class="op">=</span> []</span>
+<span id="cb18-28"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-29"><a href=""></a><span class="co"># Step 4: 梯度下降訓練</span></span>
+<span id="cb18-30"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-31"><a href=""></a><span class="cf">for</span> <span class="bu">iter</span> <span class="kw">in</span> <span class="bu">range</span>(num_iter):</span>
+<span id="cb18-32"><a href=""></a>    <span class="co"># 前向傳播</span></span>
+<span id="cb18-33"><a href=""></a>    y_pred <span class="op">=</span> a <span class="op">*</span> x <span class="op">+</span> b</span>
+<span id="cb18-34"><a href=""></a></span>
+<span id="cb18-35"><a href=""></a></span>
+<span id="cb18-36"><a href=""></a>    <span class="co"># 計算損失函數 (MSE)</span></span>
+<span id="cb18-37"><a href=""></a>    loss <span class="op">=</span> np.<span class="bu">sum</span>((y_pred <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span>)<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>n_samples)</span>
+<span id="cb18-38"><a href=""></a>    loss_history.append(loss)</span>
+<span id="cb18-39"><a href=""></a></span>
+<span id="cb18-40"><a href=""></a>    <span class="co"># 計算梯度</span></span>
+<span id="cb18-41"><a href=""></a>    da <span class="op">=</span> (y_pred <span class="op">-</span> y).dot(x) <span class="op">/</span> n_samples</span>
+<span id="cb18-42"><a href=""></a>    db <span class="op">=</span> (y_pred <span class="op">-</span> y).<span class="bu">sum</span>() <span class="op">/</span> n_samples</span>
+<span id="cb18-43"><a href=""></a></span>
+<span id="cb18-44"><a href=""></a>    <span class="co"># 更新參數</span></span>
+<span id="cb18-45"><a href=""></a>    a <span class="op">=</span> a <span class="op">-</span> learning_rate <span class="op">*</span> da</span>
+<span id="cb18-46"><a href=""></a>    b <span class="op">=</span> b <span class="op">-</span> learning_rate <span class="op">*</span> db</span>
+<span id="cb18-47"><a href=""></a></span>
+<span id="cb18-48"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-49"><a href=""></a><span class="co"># 正規方程求解</span></span>
+<span id="cb18-50"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-51"><a href=""></a></span>
+<span id="cb18-52"><a href=""></a><span class="co"># 擴充矩陣 X = [x, 1]</span></span>
+<span id="cb18-53"><a href=""></a>X_matrix <span class="op">=</span> np.column_stack([x, np.ones(<span class="bu">len</span>(x))])</span>
+<span id="cb18-54"><a href=""></a></span>
+<span id="cb18-55"><a href=""></a><span class="co"># 正規方程求解: w = (X^T X)^(-1) X^T y &lt;=&gt; X^+ y</span></span>
+<span id="cb18-56"><a href=""></a>theta <span class="op">=</span> np.linalg.pinv(X_matrix) <span class="op">@</span> y</span>
+<span id="cb18-57"><a href=""></a>a_normal, b_normal <span class="op">=</span> theta</span>
+<span id="cb18-58"><a href=""></a></span>
+<span id="cb18-59"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-60"><a href=""></a><span class="co"># Step 5: 輸出最終結果</span></span>
+<span id="cb18-61"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-62"><a href=""></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> <span class="st">"="</span><span class="op">*</span><span class="dv">50</span>)</span>
+<span id="cb18-63"><a href=""></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'方法'</span><span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'a 參數'</span><span class="sc">:&lt;10}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'b 參數'</span><span class="sc">:&lt;10}</span><span class="ss">"</span>)</span>
+<span id="cb18-64"><a href=""></a><span class="bu">print</span>(<span class="st">"-"</span> <span class="op">*</span> <span class="dv">60</span>)</span>
+<span id="cb18-65"><a href=""></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'梯度下降'</span><span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span>a<span class="sc">:&lt;10.4f}</span><span class="ss"> </span><span class="sc">{</span>b<span class="sc">:&lt;10.4f}</span><span class="ss">"</span>)</span>
+<span id="cb18-66"><a href=""></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'正規方程'</span><span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span>a_normal<span class="sc">:&lt;10.4f}</span><span class="ss"> </span><span class="sc">{</span>b_normal<span class="sc">:&lt;10.4f}</span><span class="ss">"</span>)</span>
+<span id="cb18-67"><a href=""></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'真實值'</span><span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span>true_a<span class="sc">:&lt;10.4f}</span><span class="ss"> </span><span class="sc">{</span>true_b<span class="sc">:&lt;10.4f}</span><span class="ss">"</span>)</span>
+<span id="cb18-68"><a href=""></a><span class="bu">print</span>(<span class="st">"="</span><span class="op">*</span><span class="dv">60</span>)</span>
+<span id="cb18-69"><a href=""></a></span>
+<span id="cb18-70"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-71"><a href=""></a><span class="co"># Step 6: 視覺化結果</span></span>
+<span id="cb18-72"><a href=""></a><span class="co">#------------------------------</span></span>
+<span id="cb18-73"><a href=""></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb18-74"><a href=""></a></span>
+<span id="cb18-75"><a href=""></a>axes[<span class="dv">0</span>].scatter(x, y, alpha<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="st">'訓練資料'</span>, s<span class="op">=</span><span class="dv">30</span>)</span>
+<span id="cb18-76"><a href=""></a>axes[<span class="dv">0</span>].plot(x, a <span class="op">*</span> x <span class="op">+</span> b, <span class="st">'r-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="ss">f'梯度下降: y = </span><span class="sc">{</span>a<span class="sc">:.2f}</span><span class="ss">x + </span><span class="sc">{</span>b<span class="sc">:.2f}</span><span class="ss">'</span>)</span>
+<span id="cb18-77"><a href=""></a>axes[<span class="dv">0</span>].plot(x, a_normal <span class="op">*</span> x <span class="op">+</span> b_normal, <span class="st">'b-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, label<span class="op">=</span><span class="ss">f'正規方程: y = </span><span class="sc">{</span>a_normal<span class="sc">:.2f}</span><span class="ss">x + </span><span class="sc">{</span>b_normal<span class="sc">:.2f}</span><span class="ss">'</span>)</span>
+<span id="cb18-78"><a href=""></a>axes[<span class="dv">0</span>].set_xlabel(<span class="st">'x'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb18-79"><a href=""></a>axes[<span class="dv">0</span>].set_ylabel(<span class="st">'y'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb18-80"><a href=""></a>axes[<span class="dv">0</span>].set_title(<span class="st">'梯度下降法結果'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb18-81"><a href=""></a>axes[<span class="dv">0</span>].legend(fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb18-82"><a href=""></a>axes[<span class="dv">0</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb18-83"><a href=""></a></span>
+<span id="cb18-84"><a href=""></a>axes[<span class="dv">1</span>].plot(loss_history, linewidth<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb18-85"><a href=""></a>axes[<span class="dv">1</span>].set_xlabel(<span class="st">'迭代次數'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb18-86"><a href=""></a>axes[<span class="dv">1</span>].set_ylabel(<span class="st">'損失 (MSE)'</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb18-87"><a href=""></a>axes[<span class="dv">1</span>].set_title(<span class="st">'訓練過程的損失函數變化'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb18-88"><a href=""></a>axes[<span class="dv">1</span>].legend(fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb18-89"><a href=""></a>axes[<span class="dv">1</span>].grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb18-90"><a href=""></a>axes[<span class="dv">1</span>].set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb18-91"><a href=""></a></span>
+<span id="cb18-92"><a href=""></a>plt.tight_layout()</span>
+<span id="cb18-93"><a href=""></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+==================================================
+方法           a 參數       b 參數      
+------------------------------------------------------------
+梯度下降         3.0782     1.7189    
+正規方程         3.0065     2.1881    
+真實值          3.0000     2.0000    
+============================================================</code></pre>
+</div>
+
+</div>
+<img data-src="LAB_1_走入_Pytorch_的世界_files/figure-revealjs/cell-11-output-2.png" class="r-stretch"></section>
+<section id="使用-numpy-實現機器學習模型有兩個痛點" class="slide level2">
+<h2>使用 Numpy 實現機器學習模型有兩個痛點</h2>
+<ul>
+<li>需要手工求函數關於參數的偏導數</li>
+</ul>
+<p>如果是簡單的函數或許還好，但一旦函數的形式變得複雜（尤其是深度學習模型），手工求導的過程將變得非常痛苦，甚至不可行。</p>
+<ul>
+<li>需要手工實現最佳化演算法</li>
+</ul>
+<p>這裏使用了最基礎的梯度下降方法，因此參數的更新還較為容易。但如果使用更加複雜的參數更新方法（例如 Adam 或者 Adagrad），這個更新過程的編寫同樣會非常繁雜。</p>
+<p>而 Pytorch 等深度學習框架很大程度上解決了這些痛點，為機器/深度學習模型的實現帶來了很大的便利。</p>
+<p>以下程式展示如何用 <strong>PyTorch + 自動微分 (autograd)</strong> 來實現 <strong>梯度下降 (Gradient Descent)</strong>，求解線性回歸的參數 <span class="math inline">\(a, b\)</span>。</p>
+</section>
+<section class="slide level2">
+
+<div id="cell-24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="1de76110-b1eb-4b39-c43a-f0ee065bd038" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href=""></a><span class="co"># 將 x, y 轉換成 tensor</span></span>
+<span id="cb20-2"><a href=""></a>x_torch <span class="op">=</span> torch.tensor(x)</span>
+<span id="cb20-3"><a href=""></a>y_torch <span class="op">=</span> torch.tensor(y)</span>
+<span id="cb20-4"><a href=""></a></span>
+<span id="cb20-5"><a href=""></a><span class="co"># 初使化變數</span></span>
+<span id="cb20-6"><a href=""></a>a_torch <span class="op">=</span> torch.tensor(<span class="fl">0.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb20-7"><a href=""></a>b_torch <span class="op">=</span> torch.tensor(<span class="fl">0.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb20-8"><a href=""></a></span>
+<span id="cb20-9"><a href=""></a>num_iter <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="cb20-10"><a href=""></a>learning_rate <span class="op">=</span> <span class="fl">5e-4</span></span>
+<span id="cb20-11"><a href=""></a><span class="cf">for</span> <span class="bu">iter</span> <span class="kw">in</span> <span class="bu">range</span>(num_iter):</span>
+<span id="cb20-12"><a href=""></a></span>
+<span id="cb20-13"><a href=""></a>    <span class="co"># forward</span></span>
+<span id="cb20-14"><a href=""></a>    y_pred <span class="op">=</span> a_torch <span class="op">*</span> x_torch <span class="op">+</span> b_torch</span>
+<span id="cb20-15"><a href=""></a>    loss <span class="op">=</span> torch.<span class="bu">sum</span>((y_pred <span class="op">-</span> y_torch)<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>n_samples)</span>
+<span id="cb20-16"><a href=""></a></span>
+<span id="cb20-17"><a href=""></a>    <span class="co"># calculate derivatives</span></span>
+<span id="cb20-18"><a href=""></a>    da, db <span class="op">=</span> torch.autograd.grad(loss, [a_torch, b_torch])</span>
+<span id="cb20-19"><a href=""></a></span>
+<span id="cb20-20"><a href=""></a>    <span class="co"># 更新參數</span></span>
+<span id="cb20-21"><a href=""></a>    <span class="cf">with</span> torch.no_grad(): <span class="co"># 更新參數時不要記錄</span></span>
+<span id="cb20-22"><a href=""></a>        a_torch <span class="op">-=</span> learning_rate<span class="op">*</span>da</span>
+<span id="cb20-23"><a href=""></a>        b_torch <span class="op">-=</span> learning_rate<span class="op">*</span>db</span>
+<span id="cb20-24"><a href=""></a></span>
+<span id="cb20-25"><a href=""></a></span>
+<span id="cb20-26"><a href=""></a><span class="bu">print</span>(<span class="st">'a_torch = '</span>, a_torch.detach().numpy())</span>
+<span id="cb20-27"><a href=""></a><span class="bu">print</span>(<span class="st">'b_torch = '</span>, b_torch.detach().numpy())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>a_torch =  3.0415158
+b_torch =  1.5286039</code></pre>
+</div>
+</div>
+</section>
+<section id="使用-pytorch-的-.backward-進行梯度計算與參數更新" class="slide level2">
+<h2>使用 PyTorch 的 <code>.backward()</code> 進行梯度計算與參數更新</h2>
+<p>前面我們使用 <code>torch.autograd.grad</code> 來手動取得偏導數。<br>
+這裡我們展示另一種 <strong>更常見的寫法</strong>：利用 <code>loss.backward()</code> 自動計算梯度，並存在每個張量的 <code>.grad</code> 屬性中。</p>
+<div id="cell-26" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="92554751-f4f1-46ff-a2f7-2d2a6f7343a4" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href=""></a><span class="co"># 初使化變數</span></span>
+<span id="cb22-2"><a href=""></a>a_torch <span class="op">=</span> torch.tensor(<span class="fl">0.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb22-3"><a href=""></a>b_torch <span class="op">=</span> torch.tensor(<span class="fl">0.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb22-4"><a href=""></a></span>
+<span id="cb22-5"><a href=""></a>num_iter <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="cb22-6"><a href=""></a>learning_rate <span class="op">=</span> <span class="fl">5e-4</span></span>
+<span id="cb22-7"><a href=""></a><span class="cf">for</span> <span class="bu">iter</span> <span class="kw">in</span> <span class="bu">range</span>(num_iter):</span>
+<span id="cb22-8"><a href=""></a></span>
+<span id="cb22-9"><a href=""></a>    <span class="co"># forward</span></span>
+<span id="cb22-10"><a href=""></a>    y_pred <span class="op">=</span> a_torch <span class="op">*</span> x_torch <span class="op">+</span> b_torch</span>
+<span id="cb22-11"><a href=""></a>    loss <span class="op">=</span> torch.<span class="bu">sum</span>((y_pred <span class="op">-</span> y_torch)<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>n_samples)</span>
+<span id="cb22-12"><a href=""></a></span>
+<span id="cb22-13"><a href=""></a>    <span class="co"># zero grad</span></span>
+<span id="cb22-14"><a href=""></a>    <span class="cf">if</span> a_torch.grad <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb22-15"><a href=""></a>        a_torch.grad.zero_()</span>
+<span id="cb22-16"><a href=""></a>    <span class="cf">if</span> b_torch.grad <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb22-17"><a href=""></a>        b_torch.grad.zero_()</span>
+<span id="cb22-18"><a href=""></a></span>
+<span id="cb22-19"><a href=""></a>    <span class="co"># backward</span></span>
+<span id="cb22-20"><a href=""></a>    loss.backward() <span class="co"># &lt;- 後向傳播另一種使用方式，會自動對 requared_grad=True 的參數進行求導</span></span>
+<span id="cb22-21"><a href=""></a>                    <span class="co">#    參數的導數存在 a.grad 和 b.grad</span></span>
+<span id="cb22-22"><a href=""></a></span>
+<span id="cb22-23"><a href=""></a>    <span class="co"># 更新參數</span></span>
+<span id="cb22-24"><a href=""></a>    <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb22-25"><a href=""></a>        a_torch <span class="op">-=</span> learning_rate <span class="op">*</span> a_torch.grad</span>
+<span id="cb22-26"><a href=""></a>        b_torch <span class="op">-=</span> learning_rate <span class="op">*</span> b_torch.grad</span>
+<span id="cb22-27"><a href=""></a></span>
+<span id="cb22-28"><a href=""></a><span class="bu">print</span>(<span class="st">'a_torch = '</span>, a_torch.detach().numpy())</span>
+<span id="cb22-29"><a href=""></a><span class="bu">print</span>(<span class="st">'b_torch = '</span>, b_torch.detach().numpy())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>a_torch =  3.0415158
+b_torch =  1.5286039</code></pre>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<p>在 Pytorch 中呼叫 <code>backward()</code>，其導數會被累加到參數的 <code>grad</code> 中。因此必須在每次訓練疊代中將梯度歸零。至於為什麼 Pytorch 不自動歸零，其官方說法是為了在更複雜的模型中有更大的彈性。</p>
+</section>
+<section id="使用自動微分與-pytorch-optimizer-進行線性迴歸" class="slide level2">
+<h2>使用自動微分與 PyTorch Optimizer 進行線性迴歸</h2>
+<p>前面我們示範過： 1. 用 <code>autograd.grad</code> 手動取偏導並更新參數<br>
+2. 用 <code>.backward()</code> + <code>.grad</code> 直接更新參數</p>
+<p>現在進一步，我們可以用 <strong>PyTorch 提供的 Optimizer</strong>，讓參數更新更簡潔。<br>
+這也是 <strong>訓練深度學習模型的標準流程</strong>。</p>
+<div id="cell-29" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="d537bff9-d849-407e-ea98-1bf35a000478" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href=""></a><span class="co"># 初使化變數</span></span>
+<span id="cb24-2"><a href=""></a>a_torch <span class="op">=</span> torch.tensor(<span class="fl">0.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb24-3"><a href=""></a>b_torch <span class="op">=</span> torch.tensor(<span class="fl">0.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb24-4"><a href=""></a></span>
+<span id="cb24-5"><a href=""></a>num_iter <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="cb24-6"><a href=""></a>optimizer <span class="op">=</span> torch.optim.SGD([a_torch, b_torch], lr<span class="op">=</span><span class="fl">5e-4</span>) <span class="co"># 定義一個 stochastic gradient descent 優化器</span></span>
+<span id="cb24-7"><a href=""></a></span>
+<span id="cb24-8"><a href=""></a><span class="cf">for</span> <span class="bu">iter</span> <span class="kw">in</span> <span class="bu">range</span>(num_iter):</span>
+<span id="cb24-9"><a href=""></a></span>
+<span id="cb24-10"><a href=""></a>    <span class="co"># forward</span></span>
+<span id="cb24-11"><a href=""></a>    y_pred <span class="op">=</span> a_torch <span class="op">*</span> x_torch <span class="op">+</span> b_torch</span>
+<span id="cb24-12"><a href=""></a>    loss <span class="op">=</span> torch.<span class="bu">sum</span>((y_pred <span class="op">-</span> y_torch)<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>n_samples)</span>
+<span id="cb24-13"><a href=""></a></span>
+<span id="cb24-14"><a href=""></a>    <span class="co"># backward</span></span>
+<span id="cb24-15"><a href=""></a>    optimizer.zero_grad() <span class="co"># &lt;- 需在 backward() 之前呼叫</span></span>
+<span id="cb24-16"><a href=""></a>    loss.backward()</span>
+<span id="cb24-17"><a href=""></a></span>
+<span id="cb24-18"><a href=""></a>    <span class="co"># Pytorch 自動根據梯度更新參數</span></span>
+<span id="cb24-19"><a href=""></a>    optimizer.step()</span>
+<span id="cb24-20"><a href=""></a></span>
+<span id="cb24-21"><a href=""></a><span class="bu">print</span>(<span class="st">'a_torch = '</span>, a_torch.detach().numpy())</span>
+<span id="cb24-22"><a href=""></a><span class="bu">print</span>(<span class="st">'b_torch = '</span>, b_torch.detach().numpy())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>a_torch =  3.0415158
+b_torch =  1.5286039</code></pre>
+</div>
+</div>
+</section>
+<section id="pytorch-梯度下降三種方法比較" class="slide level2">
+<h2>PyTorch 梯度下降三種方法比較</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 21%">
+<col style="width: 30%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>方法</th>
+<th>特點</th>
+<th>梯度計算</th>
+<th>參數更新方式</th>
+<th>適用場景</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>1. <code>torch.autograd.grad</code></strong></td>
+<td>直接計算並回傳梯度</td>
+<td><code>da, db = torch.autograd.grad(loss, [a, b])</code></td>
+<td>手動寫更新規則：<code>a -= lr*da</code></td>
+<td>學習公式、理解數學推導</td>
+</tr>
+<tr class="even">
+<td><strong>2. <code>.backward()</code> + <code>.grad</code></strong></td>
+<td>透過計算圖自動將梯度存入 <code>.grad</code></td>
+<td><code>loss.backward()</code> → <code>a.grad, b.grad</code></td>
+<td>手動寫更新規則：<code>a -= lr*a.grad</code></td>
+<td>深度學習標準流程的基礎</td>
+</tr>
+<tr class="odd">
+<td><strong>3. Optimizer (<code>torch.optim</code>)</strong></td>
+<td>最高層級封裝，最簡潔</td>
+<td><code>loss.backward()</code> 自動更新 <code>.grad</code></td>
+<td><code>optimizer.step()</code> 自動更新</td>
+<td>實際模型訓練（CNN, RNN, Transformer）</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2 scrollable">
+
+<h3 id="小結">小結</h3>
+<ul>
+<li><code>autograd.grad</code> → <strong>數學練習</strong>，了解梯度的來源<br>
+</li>
+<li><code>.backward()</code> → <strong>深度學習核心流程</strong><br>
+</li>
+<li>Optimizer → <strong>實務訓練模型時必用</strong>，支援多種優化方法（SGD, Adam, RMSProp …）</li>
+</ul>
+<p>透過線性回歸這個簡單案例，我們已經看到了 <strong>深度學習訓練的基本流程</strong>：</p>
+<ol type="1">
+<li><strong>Forward</strong>：由輸入資料計算模型的輸出<br>
+</li>
+<li><strong>Loss</strong>：計算預測值與真實標籤的誤差<br>
+</li>
+<li><strong>Backward</strong>：利用自動微分計算梯度 (Gradient)<br>
+</li>
+<li><strong>Update</strong>：依照梯度與學習率更新參數 (Optimizer)</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href=""></a></span>
+<span id="cb26-2"><a href=""></a><span class="cf">for</span> <span class="bu">iter</span> <span class="kw">in</span> <span class="bu">range</span>(num_iter):</span>
+<span id="cb26-3"><a href=""></a>    <span class="co"># ---- Forward ----</span></span>
+<span id="cb26-4"><a href=""></a>    y_pred <span class="op">=</span> model(x)               <span class="co"># 模型輸出</span></span>
+<span id="cb26-5"><a href=""></a>    loss <span class="op">=</span> loss_fn(y_pred, y)       <span class="co"># 計算損失</span></span>
+<span id="cb26-6"><a href=""></a></span>
+<span id="cb26-7"><a href=""></a>    <span class="co"># ---- Backward ----</span></span>
+<span id="cb26-8"><a href=""></a>    optimizer.zero_grad()           <span class="co"># 清除舊梯度</span></span>
+<span id="cb26-9"><a href=""></a>    loss.backward()                 <span class="co"># 自動計算梯度</span></span>
+<span id="cb26-10"><a href=""></a></span>
+<span id="cb26-11"><a href=""></a>    <span class="co"># ---- Update ----</span></span>
+<span id="cb26-12"><a href=""></a>    optimizer.step()                <span class="co"># 更新參數</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>這四個步驟組成了「深度學習模型訓練的骨架」。<br>
+不管模型多麼複雜（線性回歸、CNN、RNN、Transformer…），其核心流程都遵循這個框架。</p>
+</section>
+<section id="小結-1" class="slide level2">
+<h2>小結：</h2>
+<ul>
+<li>線性回歸是最簡單的深度學習模型<br>
+</li>
+<li>梯度下降是模型訓練的基礎方法<br>
+</li>
+<li>Optimizer 將訓練流程自動化，讓我們能專注於設計更強大的網路結構</li>
+</ul>
+</section>
+<section id="常見錯誤與陷阱" class="slide level2 scrollable">
+<h2>常見錯誤與陷阱</h2>
+<ol type="1">
+<li><p>梯度累積</p>
+<p><strong>症狀</strong>：損失震盪或爆掉。</p>
+<p><strong>可能原因</strong>：每次 <code>backward()</code> 會把梯度 加到 <code>param.grad</code>; 沒清空就會累加。</p>
+<p><strong>解法</strong>：在每個 step 前 <code>optimizer.zero_grad()</code> 或 <code>for p in model.parameters(): p.grad = None</code>。</p></li>
+</ol>
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="LAB_1_走入_Pytorch_的世界_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

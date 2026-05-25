@@ -1,0 +1,387 @@
+
+<style>
+  canvas { display: block; margin: 0 auto; }
+  .ctrl { display: flex; align-items: center; gap: 10px; justify-content: center; flex-wrap: wrap; padding: 10px 0 4px; font-size: 13px; color: var(--color-text-secondary); }
+  .legend { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; font-size: 12px; color: var(--color-text-secondary); padding: 6px 0 2px; }
+  .ld { display: flex; align-items: center; gap: 5px; }
+  .lc { width: 22px; height: 3px; border-radius: 2px; }
+  #hint { font-size: 12px; color: var(--color-text-tertiary); text-align: center; padding-bottom: 4px; }
+</style>
+
+<canvas id="c" width="640" height="430"></canvas>
+<div class="ctrl">
+  <button id="btnSurface" class="active" onclick="setView('surface')">z = f(x,y) 曲面</button>
+  <button id="btnEllipsoid" onclick="setView('ellipsoid')">F(x,y,z)=const 曲面</button>
+  <label><input type="checkbox" id="chkGrad" checked> 梯度 ∇</label>
+  <label><input type="checkbox" id="chkTan" checked> 切平面</label>
+</div>
+<div id="hint">右鍵拖曳旋轉視角　／　左鍵拖曳粉色點移動</div>
+<div class="legend">
+  <div class="ld"><div class="lc" style="background:#378ADD"></div>等高線</div>
+  <div class="ld"><div class="lc" style="background:#E85D24"></div>梯度 ∇f</div>
+  <div class="ld"><div class="lc" style="background:rgba(100,200,120,0.7);height:8px;width:22px;border-radius:2px"></div>切平面</div>
+  <div class="ld"><div class="lc" style="background:#D4537E;width:10px;height:10px;border-radius:50%"></div>可拖曳的點</div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const cx0 = W/2, cy0 = H/2 + 30;
+const scale = 90;
+
+let view = 'surface';
+let rotX = 0.55, rotY = 0.6;
+let draggingView = false, draggingPoint = false;
+let lastX = 0, lastY = 0;
+
+// User-controlled point position (in world space)
+let pt = { x: 0.5, y: 0.3 };       // for surface: (x,y)
+let ptE = { theta: 0.8, phi: 0.9 }; // for ellipsoid: spherical coords
+
+function setView(v) {
+  view = v;
+  document.getElementById('btnSurface').classList.toggle('active', v==='surface');
+  document.getElementById('btnEllipsoid').classList.toggle('active', v==='ellipsoid');
+}
+
+function project(x, y, z) {
+  const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+  const x1 = x*cosY + z*sinY;
+  const z1 = -x*sinY + z*cosY;
+  const y1 = y*cosX - z1*sinX;
+  const z2 = y*sinX + z1*cosX;
+  const fov = 5;
+  const d = fov - z2*0.3;
+  return { sx: cx0 + x1*scale*fov/d, sy: cy0 - y1*scale*fov/d, depth: z2 };
+}
+
+function f(x, y) { return Math.exp(-(x*x*0.7 + y*y*0.5)) * 2; }
+function grad2(x, y) {
+  const h = 0.001;
+  return { gx: (f(x+h,y)-f(x-h,y))/(2*h), gy: (f(x,y+h)-f(x,y-h))/(2*h) };
+}
+
+// Project a 2D screen delta onto the XY world plane given current rotation
+// Returns { dx, dy } in world space
+function screenDeltaToWorld(dsx, dsy) {
+  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+  const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+  // world X axis in screen space: project (1,0,0) relative to origin
+  const ox = project(0,0,0);
+  const wx = project(1,0,0);
+  const wy = project(0,1,0);
+  const wxS = { x: wx.sx - ox.sx, y: wx.sy - ox.sy };
+  const wyS = { x: wy.sx - ox.sx, y: wy.sy - ox.sy };
+  // Solve [wxS wyS] * [a b]^T = [dsx dsy] for world XY movement
+  const det = wxS.x*wyS.y - wxS.y*wyS.x;
+  if (Math.abs(det) < 0.01) return { dx: 0, dy: 0 };
+  const a = (dsx*wyS.y - dsy*wyS.x) / det;
+  const b = (wxS.x*dsy - wxS.y*dsx) / det;
+  return { dx: a, dy: b };
+}
+
+// Hit test: is screen point (mx,my) near the projected world point?
+function hitPoint(mx, my, wx, wy, wz, radius=14) {
+  const p = project(wx, wy, wz);
+  return Math.hypot(mx - p.sx, my - p.sy) < radius;
+}
+
+function getCanvasXY(e) {
+  const r = canvas.getBoundingClientRect();
+  const scaleW = W / r.width;
+  const scaleH = H / r.height;
+  if (e.touches) {
+    return { x: (e.touches[0].clientX - r.left)*scaleW, y: (e.touches[0].clientY - r.top)*scaleH };
+  }
+  return { x: (e.clientX - r.left)*scaleW, y: (e.clientY - r.top)*scaleH };
+}
+
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+canvas.addEventListener('mousedown', e => {
+  const {x, y} = getCanvasXY(e);
+  if (e.button === 2) { draggingView = true; lastX = e.clientX; lastY = e.clientY; return; }
+  // Check if clicking near the point
+  if (view === 'surface') {
+    const az = f(pt.x, pt.y);
+    if (hitPoint(x, y, pt.x, pt.y, az)) { draggingPoint = true; lastX = e.clientX; lastY = e.clientY; canvas.style.cursor='grabbing'; return; }
+  } else {
+    const R=1.0, Rz=0.65;
+    const ax = R*Math.sin(ptE.phi)*Math.cos(ptE.theta);
+    const ay = R*Math.sin(ptE.phi)*Math.sin(ptE.theta);
+    const az2 = Rz*Math.cos(ptE.phi);
+    if (hitPoint(x, y, ax, ay, az2)) { draggingPoint = true; lastX = e.clientX; lastY = e.clientY; canvas.style.cursor='grabbing'; return; }
+  }
+  draggingView = true; lastX = e.clientX; lastY = e.clientY;
+});
+
+canvas.addEventListener('mousemove', e => {
+  const {x, y} = getCanvasXY(e);
+  if (!draggingView && !draggingPoint) {
+    // Cursor hint
+    if (view === 'surface') {
+      const az = f(pt.x, pt.y);
+      canvas.style.cursor = hitPoint(x, y, pt.x, pt.y, az) ? 'grab' : 'default';
+    } else {
+      const R=1.0, Rz=0.65;
+      const ax=R*Math.sin(ptE.phi)*Math.cos(ptE.theta), ay=R*Math.sin(ptE.phi)*Math.sin(ptE.theta), az2=Rz*Math.cos(ptE.phi);
+      canvas.style.cursor = hitPoint(x, y, ax, ay, az2) ? 'grab' : 'default';
+    }
+    return;
+  }
+  const dsx = (e.clientX - lastX) * (W / canvas.getBoundingClientRect().width);
+  const dsy = (e.clientY - lastY) * (H / canvas.getBoundingClientRect().height);
+  if (draggingView) {
+    rotY += (e.clientX - lastX) * 0.012;
+    rotX += (e.clientY - lastY) * 0.012;
+    rotX = Math.max(-1.2, Math.min(1.2, rotX));
+  } else if (draggingPoint) {
+    if (view === 'surface') {
+      const {dx, dy} = screenDeltaToWorld(dsx, dsy);
+      pt.x = Math.max(-1.8, Math.min(1.8, pt.x + dx));
+      pt.y = Math.max(-1.8, Math.min(1.8, pt.y + dy));
+    } else {
+      // Move along sphere: drag changes theta and phi
+      ptE.theta += dsx * 0.015;
+      ptE.phi = Math.max(0.15, Math.min(Math.PI - 0.15, ptE.phi + dsy * 0.015));
+    }
+  }
+  lastX = e.clientX; lastY = e.clientY;
+});
+
+canvas.addEventListener('mouseup', () => { draggingView = false; draggingPoint = false; canvas.style.cursor = 'default'; });
+canvas.addEventListener('mouseleave', () => { draggingView = false; draggingPoint = false; canvas.style.cursor = 'default'; });
+
+// Touch support
+canvas.addEventListener('touchstart', e => {
+  const {x, y} = getCanvasXY(e);
+  const t0 = e.touches[0];
+  if (view === 'surface') {
+    const az = f(pt.x, pt.y);
+    if (hitPoint(x, y, pt.x, pt.y, az, 20)) { draggingPoint=true; lastX=t0.clientX; lastY=t0.clientY; e.preventDefault(); return; }
+  } else {
+    const R=1.0, Rz=0.65;
+    const ax=R*Math.sin(ptE.phi)*Math.cos(ptE.theta), ay=R*Math.sin(ptE.phi)*Math.sin(ptE.theta), az2=Rz*Math.cos(ptE.phi);
+    if (hitPoint(x, y, ax, ay, az2, 20)) { draggingPoint=true; lastX=t0.clientX; lastY=t0.clientY; e.preventDefault(); return; }
+  }
+  draggingView=true; lastX=t0.clientX; lastY=t0.clientY; e.preventDefault();
+}, {passive:false});
+
+canvas.addEventListener('touchmove', e => {
+  const t0 = e.touches[0];
+  const dsx = (t0.clientX - lastX) * (W / canvas.getBoundingClientRect().width);
+  const dsy = (t0.clientY - lastY) * (H / canvas.getBoundingClientRect().height);
+  if (draggingView) {
+    rotY += (t0.clientX-lastX)*0.012; rotX += (t0.clientY-lastY)*0.012;
+    rotX = Math.max(-1.2, Math.min(1.2, rotX));
+  } else if (draggingPoint) {
+    if (view==='surface') {
+      const {dx,dy} = screenDeltaToWorld(dsx, dsy);
+      pt.x = Math.max(-1.8, Math.min(1.8, pt.x+dx));
+      pt.y = Math.max(-1.8, Math.min(1.8, pt.y+dy));
+    } else {
+      ptE.theta += dsx*0.015;
+      ptE.phi = Math.max(0.15, Math.min(Math.PI-0.15, ptE.phi+dsy*0.015));
+    }
+  }
+  lastX=t0.clientX; lastY=t0.clientY; e.preventDefault();
+}, {passive:false});
+canvas.addEventListener('touchend', () => { draggingView=false; draggingPoint=false; });
+
+function drawSurface() {
+  const N = 28, range = 2.2, step = 2*range/N;
+  const showGrad = document.getElementById('chkGrad').checked;
+  const showTan = document.getElementById('chkTan').checked;
+  const { gx, gy } = grad2(pt.x, pt.y);
+  const az = f(pt.x, pt.y);
+
+  // Faces
+  const faces = [];
+  for (let i=0;i<N;i++) for (let j=0;j<N;j++) {
+    const x0=-range+i*step, y0=-range+j*step, x1=x0+step, y1=y0+step;
+    const z00=f(x0,y0), z10=f(x1,y0), z11=f(x1,y1), z01=f(x0,y1);
+    const cz=(z00+z10+z11+z01)/4;
+    const p00=project(x0,y0,z00), p10=project(x1,y0,z10), p11=project(x1,y1,z11), p01=project(x0,y1,z01);
+    const depth=(p00.depth+p10.depth+p11.depth+p01.depth)/4;
+    const r=Math.floor(55+cz*120), g2=Math.floor(120+cz*80), b=Math.floor(180-cz*100);
+    faces.push({p00,p10,p11,p01,depth,col:`rgba(${r},${g2},${b},0.82)`});
+  }
+  faces.sort((a,b)=>b.depth-a.depth);
+  for (const f2 of faces) {
+    ctx.beginPath();
+    ctx.moveTo(f2.p00.sx,f2.p00.sy); ctx.lineTo(f2.p10.sx,f2.p10.sy);
+    ctx.lineTo(f2.p11.sx,f2.p11.sy); ctx.lineTo(f2.p01.sx,f2.p01.sy);
+    ctx.closePath(); ctx.fillStyle=f2.col; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=0.5; ctx.stroke();
+  }
+
+  // Contour rings
+  for (const lvl of [0.25, 0.55, 0.9, 1.3]) {
+    const rx = Math.sqrt(-Math.log(lvl/2)/0.7);
+    const ry = Math.sqrt(-Math.log(lvl/2)/0.5);
+    if (isNaN(rx)||rx>range) continue;
+    ctx.beginPath(); ctx.strokeStyle='rgba(59,139,212,0.7)'; ctx.lineWidth=1.5;
+    for (let i=0;i<=80;i++) {
+      const a=(i/80)*2*Math.PI;
+      const px=rx*Math.cos(a), py=ry*Math.sin(a);
+      const p=project(px,py,f(px,py));
+      if(i===0)ctx.moveTo(p.sx,p.sy);else ctx.lineTo(p.sx,p.sy);
+    }
+    ctx.stroke();
+  }
+
+  // Tangent plane
+  if (showTan) {
+    const ps=0.65;
+    const corners=[[-ps,-ps],[ps,-ps],[ps,ps],[-ps,ps]].map(([dx,dy])=>project(pt.x+dx, pt.y+dy, az+gx*dx+gy*dy));
+    ctx.beginPath(); ctx.moveTo(corners[0].sx,corners[0].sy);
+    for(let k=1;k<4;k++) ctx.lineTo(corners[k].sx,corners[k].sy);
+    ctx.closePath(); ctx.fillStyle='rgba(100,200,120,0.22)'; ctx.fill();
+    ctx.strokeStyle='rgba(60,160,80,0.7)'; ctx.lineWidth=1.2; ctx.stroke();
+  }
+
+  // Gradient arrow
+  if (showGrad) {
+    const gl=Math.sqrt(gx*gx+gy*gy)||1;
+    const gs=0.6;
+    const pp=project(pt.x,pt.y,az);
+    const ep=project(pt.x+gx/gl*gs, pt.y+gy/gl*gs, az+gl*gs*0.4);
+    ctx.beginPath(); ctx.strokeStyle='#E85D24'; ctx.lineWidth=2.5;
+    ctx.moveTo(pp.sx,pp.sy); ctx.lineTo(ep.sx,ep.sy); ctx.stroke();
+    const angle=Math.atan2(ep.sy-pp.sy,ep.sx-pp.sx);
+    ctx.beginPath(); ctx.fillStyle='#E85D24';
+    ctx.moveTo(ep.sx,ep.sy);
+    ctx.lineTo(ep.sx-9*Math.cos(angle-0.4),ep.sy-9*Math.sin(angle-0.4));
+    ctx.lineTo(ep.sx-9*Math.cos(angle+0.4),ep.sy-9*Math.sin(angle+0.4));
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#E85D24'; ctx.font='bold 13px sans-serif';
+    ctx.fillText('∇f', ep.sx+4, ep.sy-5);
+  }
+
+  // Point (draw last, on top)
+  const pp=project(pt.x,pt.y,az);
+  // glow ring
+  ctx.beginPath(); ctx.arc(pp.sx,pp.sy,10,0,2*Math.PI);
+  ctx.fillStyle='rgba(212,83,126,0.25)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(pp.sx,pp.sy,6,0,2*Math.PI);
+  ctx.fillStyle='#D4537E'; ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.fillStyle='#D4537E'; ctx.font='bold 12px sans-serif';
+  ctx.fillText(`(${pt.x.toFixed(2)}, ${pt.y.toFixed(2)})`, pp.sx+10, pp.sy-6);
+
+  // Vertical drop
+  const bot=project(pt.x,pt.y,0);
+  ctx.beginPath(); ctx.setLineDash([3,3]); ctx.strokeStyle='rgba(212,83,126,0.35)'; ctx.lineWidth=1;
+  ctx.moveTo(pp.sx,pp.sy); ctx.lineTo(bot.sx,bot.sy); ctx.stroke(); ctx.setLineDash([]);
+
+  drawAxes();
+}
+
+function drawEllipsoid() {
+  const showGrad = document.getElementById('chkGrad').checked;
+  const showTan = document.getElementById('chkTan').checked;
+  const R=1.0, Rz=0.65;
+  const ax=R*Math.sin(ptE.phi)*Math.cos(ptE.theta);
+  const ay=R*Math.sin(ptE.phi)*Math.sin(ptE.theta);
+  const az=Rz*Math.cos(ptE.phi);
+
+  const NI=32, NJ=20;
+  const faces=[];
+  for(let i=0;i<NI;i++) for(let j=0;j<NJ;j++){
+    const t1=(i/NI)*2*Math.PI, t2=((i+1)/NI)*2*Math.PI;
+    const p1=(j/NJ)*Math.PI, p2=((j+1)/NJ)*Math.PI;
+    const pts=[[R*Math.sin(p1)*Math.cos(t1),R*Math.sin(p1)*Math.sin(t1),Rz*Math.cos(p1)],[R*Math.sin(p1)*Math.cos(t2),R*Math.sin(p1)*Math.sin(t2),Rz*Math.cos(p1)],[R*Math.sin(p2)*Math.cos(t2),R*Math.sin(p2)*Math.sin(t2),Rz*Math.cos(p2)],[R*Math.sin(p2)*Math.cos(t1),R*Math.sin(p2)*Math.sin(t1),Rz*Math.cos(p2)]];
+    const projs=pts.map(p=>project(...p));
+    const depth=projs.reduce((s,p)=>s+p.depth,0)/4;
+    const nz=(j/NJ-0.5)*2;
+    const r2=Math.floor(80+nz*30), g2=Math.floor(140+nz*20), b2=Math.floor(180+nz*40);
+    faces.push({projs,depth,col:`rgba(${r2},${g2},${b2},0.75)`});
+  }
+  faces.sort((a,b)=>b.depth-a.depth);
+  for(const f2 of faces){
+    ctx.beginPath(); ctx.moveTo(f2.projs[0].sx,f2.projs[0].sy);
+    for(let k=1;k<4;k++) ctx.lineTo(f2.projs[k].sx,f2.projs[k].sy);
+    ctx.closePath(); ctx.fillStyle=f2.col; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.1)'; ctx.lineWidth=0.4; ctx.stroke();
+  }
+
+  // Rings
+  for(const [ra,rb,fixAxis] of [[R,R,0],[R,Rz,1]]) {
+    ctx.beginPath(); ctx.strokeStyle='rgba(59,139,212,0.75)'; ctx.lineWidth= fixAxis===0?2:1.5;
+    for(let i=0;i<=80;i++){
+      const a=(i/80)*2*Math.PI;
+      const p=fixAxis===0?project(ra*Math.cos(a),rb*Math.sin(a),0):project(ra*Math.cos(a),0,rb*Math.sin(a));
+      if(i===0)ctx.moveTo(p.sx,p.sy);else ctx.lineTo(p.sx,p.sy);
+    }
+    ctx.stroke();
+  }
+
+  // Tangent plane
+  if(showTan){
+    const nx=2*ax, ny=2*ay, nz=4*az;
+    const nl=Math.sqrt(nx*nx+ny*ny+nz*nz)||1;
+    const u=[-ny,nx,0]; const ul=Math.sqrt(u[0]*u[0]+u[1]*u[1])||0.001;
+    const un=[u[0]/ul,u[1]/ul,0];
+    const v=[ny*(nz/nl)-nz*(ny/nl), nz*(nx/nl)-nx*(nz/nl), nx*(ny/nl)-ny*(nx/nl)];
+    const vl=Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])||0.001;
+    const vn=v.map(x=>x/vl);
+    const ps=0.55;
+    const corners=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([s1,s2])=>project(ax+un[0]*s1*ps+vn[0]*s2*ps,ay+un[1]*s1*ps+vn[1]*s2*ps,az+un[2]*s1*ps+vn[2]*s2*ps));
+    ctx.beginPath(); ctx.moveTo(corners[0].sx,corners[0].sy);
+    for(let k=1;k<4;k++) ctx.lineTo(corners[k].sx,corners[k].sy);
+    ctx.closePath(); ctx.fillStyle='rgba(100,200,120,0.25)'; ctx.fill();
+    ctx.strokeStyle='rgba(60,160,80,0.7)'; ctx.lineWidth=1.2; ctx.stroke();
+  }
+
+  // Gradient
+  if(showGrad){
+    const nx=2*ax, ny=2*ay, nz=4*az;
+    const nl=Math.sqrt(nx*nx+ny*ny+nz*nz)||1;
+    const gs=0.55;
+    const pp=project(ax,ay,az);
+    const ep=project(ax+nx/nl*gs,ay+ny/nl*gs,az+nz/nl*gs);
+    ctx.beginPath(); ctx.strokeStyle='#E85D24'; ctx.lineWidth=2.5;
+    ctx.moveTo(pp.sx,pp.sy); ctx.lineTo(ep.sx,ep.sy); ctx.stroke();
+    const angle=Math.atan2(ep.sy-pp.sy,ep.sx-pp.sx);
+    ctx.beginPath(); ctx.fillStyle='#E85D24';
+    ctx.moveTo(ep.sx,ep.sy);
+    ctx.lineTo(ep.sx-9*Math.cos(angle-0.4),ep.sy-9*Math.sin(angle-0.4));
+    ctx.lineTo(ep.sx-9*Math.cos(angle+0.4),ep.sy-9*Math.sin(angle+0.4));
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#E85D24'; ctx.font='bold 13px sans-serif';
+    ctx.fillText('∇F', ep.sx+4, ep.sy-5);
+  }
+
+  // Point
+  const pp=project(ax,ay,az);
+  ctx.beginPath(); ctx.arc(pp.sx,pp.sy,10,0,2*Math.PI);
+  ctx.fillStyle='rgba(212,83,126,0.25)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(pp.sx,pp.sy,6,0,2*Math.PI);
+  ctx.fillStyle='#D4537E'; ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.fillStyle='#D4537E'; ctx.font='bold 12px sans-serif';
+  ctx.fillText(`(${ax.toFixed(2)}, ${ay.toFixed(2)}, ${az.toFixed(2)})`, pp.sx+10, pp.sy-6);
+
+  drawAxes();
+}
+
+function drawAxes() {
+  for(const [ex,ey,ez,lbl] of [[1.7,0,0,'x'],[0,1.7,0,'y'],[0,0,1.2,'z']]){
+    const o=project(0,0,0), e=project(ex,ey,ez);
+    ctx.beginPath(); ctx.strokeStyle='rgba(140,140,140,0.5)'; ctx.lineWidth=1;
+    ctx.moveTo(o.sx,o.sy); ctx.lineTo(e.sx,e.sy); ctx.stroke();
+    ctx.fillStyle='rgba(140,140,140,0.8)'; ctx.font='13px sans-serif';
+    ctx.fillText(lbl, e.sx+4, e.sy+4);
+  }
+}
+
+function loop() {
+  ctx.clearRect(0,0,W,H);
+  if(view==='surface') drawSurface();
+  else drawEllipsoid();
+  requestAnimationFrame(loop);
+}
+loop();
+</script>

@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="115學年度新鮮人成長營：一張照片，藏著哪些數學？完整版 20 張，約 30 分鐘。">
+  <meta name="deck-id" content="THE-PHOTO-MATH-DECK-20">
+  <title>一張照片，藏著哪些數學？｜115學年度新鮮人成長營</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="vendor/reveal/reveal.css">
+  <link rel="stylesheet" href="css/theme.css?v=20260901-6">
+  <link rel="stylesheet" href="css/selfie-module.css?v=20260830-1">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section class="hero" data-transition="fade">
+        <div class="topbar"><span>115學年度新鮮人成長營</span></div>
+        <div class="pixel-cloud" aria-hidden="true"><span>R</span><span>G</span><span>B</span></div>
+        <div class="hero-copy">
+          <h1>一張照片，<br>藏著哪些<span class="cyan">數學</span>？</h1>
+        </div>
+        <div class="hero-meta"><span>游承書｜應用數學系</span><span>SPACE / → 開始探索</span></div>
+        <aside class="notes">
+          【0:00–0:30】只用主題問題開場：「一張照片，藏著哪些數學？」停頓後進入自我介紹，先不公布答案。
+          <br><br>[Sources]<br>
+          - Blue-and-yellow macaw: Luc Viatour, “Ara ararauna,” CC BY 2.0, https://commons.wikimedia.org/wiki/File:Ara_ararauna_Luc_Viatour.jpg<br>
+          - Colorful architecture: Pixnio, CC0, https://pixnio.com/interiors-and-exteriors-design/exterior/asia-building-facade-architecture-color-colorful<br>
+          - Reveal.js feature reference: https://revealjs.com/
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>關於我｜游承書</span></div>
+        <div class="split">
+          <div>
+            <p class="eyebrow">HELLO, FRESHMEN</p>
+            <h2>我是<span class="cyan">游承書</span></h2>
+            <p class="lede"><b>應用數學系</b><span>計算數學、影像科學與電腦視覺、機器學習</span></p>
+            <div class="promise">
+              <div><b>01</b><span>用數學<i>改</i>一張照片</span></div>
+              <div><b>02</b><span>用數學讓電腦<i>看懂</i>一張照片</span></div>
+              <div><b>03</b><span>用數學<i>看見</i>照片裡沒拍到的東西</span></div>
+            </div>
+          </div>
+          <div class="portrait-wrap"><img src="assets/profile.png" alt="游承書老師"></div>
+        </div>
+        <aside class="notes">
+          【0:30–1:30】自我介紹壓在 30 秒內，重點放在右邊三個承諾：改照片、看懂照片、看見看不到的東西。告訴同學今天不會推導，看得懂就好。
+          <br><br>[Sources]<br>
+          - Portrait and profile information: user-provided source deck, slide 2.
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>為什麼要學這個</span></div>
+        <p class="eyebrow">YOU USED IT ALREADY, TODAY</p>
+        <h2>從你早上睜開眼到現在，<span class="pink">影像數學</span>已經上工好幾次</h2>
+        <div class="usecase-grid">
+          <figure class="fragment fade-up">
+            <img src="assets/selfie-outdoor-woman.jpg" alt="用手機自拍">
+            <figcaption><b>解鎖手機</b><span>臉變成一串數字，再比對像不像</span><i>向量 ・ 機率</i></figcaption>
+          </figure>
+          <figure class="fragment fade-up">
+            <img src="assets/usecase-filter.jpg?v=20260901" alt="雪山上的極光夜景">
+            <figcaption><b>拍照與濾鏡</b><span>對焦、夜景、調色，全是一格一格算出來的</span><i>函數 ・ 矩陣 ・ 最佳化</i></figcaption>
+          </figure>
+          <figure class="fragment fade-up">
+            <img src="assets/ct-room.jpg" alt="醫院的電腦斷層掃描室">
+            <figcaption><b>醫院檢查</b><span>CT 沒有切開你，是用數學算出切面</span><i>矩陣 ・ 逆問題</i></figcaption>
+          </figure>
+          <figure class="fragment fade-up">
+            <img src="assets/ai-segmentation.png" alt="AI 影像分割結果">
+            <figcaption><b>AI 看影像</b><span>找出病灶、行人、車道線</span><i>微分 ・ 最佳化</i></figcaption>
+          </figure>
+        </div>
+        <p class="usecase-note">這四件事骨子裡是同一件事：把照片當成數字，然後對數字動手。</p>
+        <aside class="notes">
+          【1:30–3:00】依序揭曉四張圖，每張問一句「這個你今天用過嗎？」。不解釋原理，只建立動機：這些都是影像處理，而影像處理的底層就是今天要看的數學。最後那句話是全場的主軸，講完就進入第一個互動。
+          <br><br>[Sources]<br>
+          - Selfie: Sincerely Media, Unsplash License, https://unsplash.com/photos/n5A818EpEAs<br>
+          - Aurora landscape and segmentation figure: user-provided assets.<br>
+          - CT scanner image: user-provided asset, ct-machine.png.
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>座標 × 像素 <span class="concept-pills"><b class="concept-pill tag-matrix">矩陣</b></span></span></div>
+        <div class="split wide-right">
+          <div>
+            <p class="eyebrow">PIXEL MICROSCOPE</p>
+            <h2>放大到最後，<br>畫面只剩<span class="pink">格子</span></h2>
+            <div class="math-line" style="margin-top:38px"><span class="symbol">灰階</span><span>每格 1 個數字：0–255</span></div>
+            <div class="math-line"><span class="symbol">彩色</span><span>每格 3 個數字：[R, G, B]</span></div>
+          </div>
+          <div class="canvas-frame pixel-stage">
+            <canvas id="pixel-canvas" aria-label="像素放大互動"></canvas>
+            <div class="readout"><span id="pixel-position">移動滑鼠</span><br><span id="pixel-value" class="cyan">[ R, G, B ]</span></div>
+          </div>
+        </div>
+        <aside class="notes">
+          【3:00–5:30｜互動 1】兩人一組，30 秒內找最亮與最藍的像素候選。請兩組報座標與 RGB；追問「座標變了，是顏色變還是位置變？」收斂到二維陣列。
+          <br><br>[Sources]<br>
+          - Image: Luc Viatour, “Ara ararauna,” CC BY 2.0, https://commons.wikimedia.org/wiki/File:Ara_ararauna_Luc_Viatour.jpg<br>
+          - Pixel representation concept: user-provided source deck, slide 5.
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>向量 × 顏色 <span class="concept-pills"><b class="concept-pill tag-vector">向量</b></span></span></div>
+        <p class="eyebrow">THREE NUMBERS, MILLIONS OF COLORS</p>
+        <h2>一個彩色像素，就是一支<span class="cyan">三維向量</span></h2>
+        <div class="demo-layout">
+          <div class="rgb-stage">
+            <div id="rgb-swatch"></div>
+            <div class="vector-readout">
+              <div>
+                <div id="rgb-vector" class="vector">[ 42, 207, 195 ]</div>
+                <div id="rgb-hex" class="hex">#2ACFC3</div>
+                <div style="margin-top:38px;color:var(--muted);font-size:19px">轉成灰階亮度</div>
+                <div id="rgb-result" class="vector pink">[ 157 ]</div>
+              </div>
+            </div>
+          </div>
+          <div class="sliders">
+            <label style="color:#ff6b6b"><span>R</span><input id="rgb-r" class="rgb-slider" type="range" min="0" max="255" value="42"><output id="rgb-r-value">42</output></label>
+            <label style="color:#62e57d"><span>G</span><input id="rgb-g" class="rgb-slider" type="range" min="0" max="255" value="207"><output id="rgb-g-value">207</output></label>
+            <label style="color:#6ea8fe"><span>B</span><input id="rgb-b" class="rgb-slider" type="range" min="0" max="255" value="195"><output id="rgb-b-value">195</output></label>
+          </div>
+        </div>
+        <aside class="notes">
+          【5:30–7:30｜互動 2】找三位學生各負責 R、G、B 滑桿，全班口頭指揮調出白、黃、紫。把三位學生比喻成向量的三個分量。
+          <br><br>[Sources]<br>
+          - RGB representation concept: user-provided source deck, slide 5.
+        </aside>
+      </section>
+
+
+      <section class="selfie-demo selfie-route">
+        <div class="topbar"><span>同一張自拍照，做四件事</span></div>
+        <p class="eyebrow">DO FIRST, NAME THE MATH LATER</p>
+        <h2>同一張自拍照，等一下會<span class="cyan">變四次</span></h2>
+        <div class="selfie-pipeline pipeline-4">
+          <div><span>01</span><b>變亮</b><small>每個數字加一點<br><i>函數</i></small></div>
+          <div><span>02</span><b>黑白</b><small>三個顏色變一個數<br><i>向量</i></small></div>
+          <div><span>03</span><b>模糊</b><small>向鄰居借顏色<br><i>矩陣</i></small></div>
+          <div><span>04</span><b>邊緣</b><small>找變化最快的位置<br><i>微分</i></small></div>
+        </div>
+        <p class="pipeline-note">這四招做的事都一樣：改掉這張照片裡的 2,457,600 個數字。沒有魔法。</p>
+        <aside class="notes">【7:30–8:00】</aside>
+      </section>
+
+
+      <section class="selfie-demo">
+        <div class="topbar"><span>自拍照 01｜變亮 <span class="concept-pills"><b class="concept-pill tag-function">函數</b></span></span></div>
+        <p class="eyebrow">ADD THE SAME NUMBER TO EVERY PIXEL</p>
+        <h2>把每個數字都加一點，照片就<span class="cyan">亮起來</span></h2>
+        <div class="selfie-stage">
+          <figure><figcaption>RESULT｜拖曳亮度</figcaption><div class="selfie-canvas"><canvas id="selfie-brightness-canvas"></canvas></div></figure>
+          <div class="selfie-panel">
+            <div class="selfie-formula">y = x + b<small>x：原亮度　b：增加的亮度</small></div>
+            <label><span>亮度 b</span><input id="selfie-brightness-value" type="range" min="-80" max="100" value="0"><output id="selfie-brightness-output">0</output></label>
+          </div>
+        </div>
+        <aside class="notes">【8:00–9:30｜互動 3】 拖動 b，將「每個像素走同一條輸入輸出規則」連到函數。</aside>
+      </section>
+
+
+      <section class="selfie-demo">
+        <div class="topbar"><span>自拍照 02｜黑白 <span class="concept-pills"><b class="concept-pill tag-vector">向量</b></span></span></div>
+        <p class="eyebrow">THREE CHANNELS BECOME ONE NUMBER</p>
+        <h2>不是刪掉顏色，而是把 RGB <span class="pink">加權組合</span></h2>
+        <div class="selfie-stage">
+          <figure><figcaption>RESULT｜彩色 → 灰階</figcaption><div class="selfie-canvas"><canvas id="selfie-grayscale-canvas"></canvas></div></figure>
+          <div class="selfie-panel">
+            <div class="selfie-vector"><span>0.299R</span><span>0.587G</span><span>0.114B</span></div>
+            <div class="selfie-formula">灰階 = w1*R + w2*G + w3*B<small>三個數字各乘一個權重再相加，這就是內積</small></div>
+            <label><span>黑白量</span><input id="selfie-grayscale-value" type="range" min="0" max="100" value="0"><output id="selfie-grayscale-output">0%</output></label>
+          </div>
+        </div>
+        <aside class="notes">【9:30–11:00｜互動 4】 把 RGB 說成三維向量；拖到 100%，觀察權重內積輸出一個灰階數字。</aside>
+      </section>
+
+
+      <section class="selfie-demo">
+        <div class="topbar"><span>自拍照 03｜模糊 <span class="concept-pills"><b class="concept-pill tag-probability">機率</b><b class="concept-pill tag-matrix">矩陣</b></span></span></div>
+        <p class="eyebrow">BORROW COLOR FROM THE NEIGHBORS</p>
+        <h2>每個像素不再單獨決定，改成看<span class="pink">附近的平均</span></h2>
+        <div class="selfie-stage">
+          <figure><figcaption>RESULT｜Gaussian blur</figcaption><div class="selfie-canvas"><canvas id="selfie-blur-canvas"></canvas></div></figure>
+          <div class="selfie-panel">
+            <div class="selfie-kernel"><span>1</span><span>2</span><span>1</span><span>2</span><span>4</span><span>2</span><span>1</span><span>2</span><span>1</span></div>
+            <div class="selfie-formula">新像素 = 鄰居的加權平均<small>中間權重最大，越遠影響越小</small></div>
+            <label><span>模糊半徑</span><input id="selfie-blur-value" type="range" min="0" max="12" value="0"><output id="selfie-blur-output">0px</output></label>
+          </div>
+        </div>
+        <aside class="notes">【11:00–12:30｜互動 5】 增加半徑，觀察紋理消失。權重矩陣描述鄰居貢獻，正規化後可類比機率分布。</aside>
+      </section>
+
+
+      <section class="selfie-demo">
+        <div class="topbar"><span>自拍照 04｜邊緣偵測 <span class="concept-pills"><b class="concept-pill tag-differential">微分</b></span></span></div>
+        <p class="eyebrow">LOOK FOR FAST CHANGES</p>
+        <h2>邊緣不是顏色，而是亮度<span class="cyan">變化最快</span>的地方</h2>
+        <div class="selfie-stage">
+          <figure><figcaption>RESULT｜Sobel gradient</figcaption><div class="selfie-canvas"><canvas id="selfie-edge-canvas"></canvas></div></figure>
+          <div class="selfie-panel">
+            <div class="selfie-formula">變化量 = 右邊像素 − 左邊像素<small>變化越大，越可能是邊緣——這就是微分在做的事</small></div>
+            <label><span>門檻</span><input id="selfie-edge-value" type="range" min="0" max="160" value="35"><output id="selfie-edge-output">35</output></label>
+          </div>
+        </div>
+        <aside class="notes">【12:30–14:00｜互動 6】 Sobel 是離散影像中的近似微分；調整門檻找出眼睛、頭髮與衣服條紋。</aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>低光增強 <span class="concept-pills"><b class="concept-pill tag-function">函數</b></span></span></div>
+        <p class="eyebrow">A SMARTER WAY TO BRIGHTEN</p>
+        <h2>同樣是變亮，但<span class="cyan">暗的地方多拉一點、亮的地方少拉一點</span></h2>
+        <div class="lowlight-lab">
+          <figure><figcaption>INPUT｜日本城鎮夜景</figcaption><div class="canvas-frame"><canvas id="lowlight-before" aria-label="日本城鎮與神社周邊的低光夜景"></canvas></div></figure>
+          <figure><figcaption>RESULT｜增強後</figcaption><div class="canvas-frame"><canvas id="lowlight-after" aria-label="自適應 Sigmoid 函數增強後的日本夜景"></canvas></div></figure>
+          <figure><figcaption>對應規則｜哪個亮度被拉到哪</figcaption><div class="lowlight-curve-frame"><canvas id="lowlight-curve" aria-label="自適應 Sigmoid 亮度映射曲線"></canvas></div></figure>
+        </div>
+        <div class="lowlight-footer">
+          <div>
+            <div class="equation lowlight-equation">第 7 頁是一條直線 y = x + b　→　這裡換成一條<span class="cyan">會彎的曲線</span><small style="display:block;margin-top:12px;color:var(--muted);font-size:19px">曲線長這樣：s = V<sup>η(V)</sup>，這裡的 η(V) = 1 / (1 + e<sup>−V</sup>)。式子看看就好，重點是「不同亮度用不同規則」。</small></div>
+            <p id="lowlight-status" class="lowlight-status">暗的地方被拉上來很多，亮的招牌卻沒有過曝。一樣是函數，只是換了一條會彎的曲線。</p>
+          </div>
+        </div>
+        <aside class="notes">
+          【14:00–16:00｜互動 7】接第 7 頁：加同一個 b 會讓亮的地方直接過曝。這裡改成「每個亮度用自己的倍率」，就是把直線換成曲線。請同學比較屋頂、神社與燈箱：暗部大幅提升，高亮區幾乎沒動。方法依李翔竣專題的 ASTF 流程固定增強 1 次，公式不推導、看形狀就好。
+          <br><br>[Sources]<br>
+          - Method: 李翔竣，《運用自適應 Sigmoid 函數進行低光源影像增強的應用》，專題海報，2024。<br>
+          - Japanese town night photograph: Tsuyoshi Kozu, Unsplash License, https://unsplash.com/photos/a-quiet-street-in-a-japanese-town-at-night-1PCRlXw7BjI
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>局部加權 × 卷積 <span class="concept-pills"><b class="concept-pill tag-matrix">矩陣</b><b class="concept-pill tag-differential">微分</b></span></span></div>
+        <p class="eyebrow">A TINY WINDOW WITH A BIG JOB</p>
+        <h2>想看見鄰居，就讓一個 <span class="pink">3 × 3 小矩陣</span>滑過整張圖</h2>
+        <div class="demo-layout">
+          <div>
+            <div id="kernel-scan-frame" class="canvas-frame demo-canvas">
+              <canvas id="kernel-canvas" aria-label="卷積濾鏡互動"></canvas>
+              <div id="kernel-scanner" class="kernel-scanner" aria-hidden="true"></div>
+              <div id="kernel-scan-position" class="kernel-scan-position">掃描位置 (0, 0)</div>
+            </div>
+            <div class="toolbar">
+              <button class="kernel-btn" data-kernel="blur">模糊</button>
+              <button class="kernel-btn" data-kernel="sharpen">銳化</button>
+              <button class="kernel-btn" data-kernel="edge">邊緣</button>
+              <button id="kernel-scan-toggle">▶ 開始掃描</button>
+            </div>
+          </div>
+          <div>
+            <h3 id="kernel-name">平均模糊</h3>
+            <div id="kernel-values" class="kernel-grid"></div>
+            <div class="equation" style="font-size:31px">新像素 = Σ（鄰居 × 權重）</div>
+            <p style="color:var(--muted);font-size:20px;margin-top:14px">同一台機器，只換那九個數字，就能模糊、銳化或抓邊緣。</p>
+          </div>
+        </div>
+        <div class="source-line">概念參考：OpenCV 2D convolution / filter2D</div>
+        <aside class="notes">
+          【16:00–18:30｜互動 8】先讓學生看 3×3 視窗逐列滑過全圖：每停一格就對鄰域做一次「乘完再加」。可按暫停，選一個區域讓九位學生各扮演一個權重，口頭完成人肉卷積；每次換 kernel 前先投票預測結果。
+          <br><br>[Sources]<br>
+          - Image: Pixnio, “Asia, building, facade, architecture, color, colorful,” CC0, https://pixnio.com/interiors-and-exteriors-design/exterior/asia-building-facade-architecture-color-colorful<br>
+          - OpenCV, “Smoothing Images / 2D Convolution”: https://docs.opencv.org/4.11.0/d4/d13/tutorial_py_filtering.html<br>
+          - OpenCV, “Making your own linear filters”: https://docs.opencv.org/5.0/tutorials/imgproc/imgtrans/filter_2d/filter_2d.html
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>濾鏡拆解 <span class="concept-pills"><b class="concept-pill tag-function">函數</b><b class="concept-pill tag-matrix">矩陣</b><b class="concept-pill tag-differential">微分</b></span></span></div>
+        <div style="display:flex;align-items:end;justify-content:space-between">
+          <div><p class="eyebrow">NOTHING NEW, JUST COMBINED</p><h2 style="margin-bottom:0">你每天在用的濾鏡，都是<span class="cyan">舊招式的組合</span></h2></div>
+          <label class="upload-label">選擇圖片<input id="filter-upload" type="file" accept="image/*"></label>
+        </div>
+        <div class="lab-pair">
+          <figure><figcaption>ORIGINAL</figcaption><div class="canvas-frame"><canvas id="filter-before"></canvas></div></figure>
+          <figure><figcaption>RESULT</figcaption><div class="canvas-frame"><canvas id="filter-after"></canvas></div></figure>
+        </div>
+        <div class="toolbar">
+          <button class="filter-btn" data-filter="original">原圖</button>
+          <button class="filter-btn" data-filter="gray">灰階</button>
+          <button class="filter-btn beauty-btn active" data-filter="beauty">美膚</button>
+          <button class="filter-btn" data-filter="sepia">懷舊</button>
+          <button class="filter-btn" data-filter="invert">負片</button>
+          <button class="filter-btn" data-filter="sharpen">銳化</button>
+          <button class="filter-btn" data-filter="edge">邊緣</button>
+          <span id="filter-explanation" class="filter-explanation">美膚：兩次鄰域平滑 ＋ 提亮 ＋ 暖色</span>
+        </div>
+        <aside class="notes">
+          【18:30–20:30｜互動 9】先點「美膚」，請學生拆解它用了哪些舊招式：平滑會看鄰居，提亮與暖色調是逐像素函數。再讓每組選一個濾鏡，寫下「逐像素」或「看鄰居」及理由後操作驗證。
+          <br><br>[Sources]<br>
+          - Default image: Sincerely Media, “Woman in black and white striped top taking selfie outdoors,” Unsplash License, https://unsplash.com/photos/n5A818EpEAs<br>
+          - Filter formulas adapted from user-provided filter.html and OpenCV filter documentation.
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>去噪｜手機夜拍為什麼還是乾淨的 <span class="concept-pills"><b class="concept-pill tag-matrix">矩陣</b><b class="concept-pill tag-probability">機率</b></span></span></div>
+        <p class="eyebrow">CLEAN IT UP WITHOUT WIPING IT OUT</p>
+        <h2>雜訊要去掉，可是<span class="pink">細節不能一起去掉</span></h2>
+        <div class="denoise-lab">
+          <figure><figcaption>NOISY｜拉亮後的夜景</figcaption><div class="canvas-frame"><canvas id="denoise-noisy" aria-label="加了雜訊的夜景照片"></canvas></div></figure>
+          <figure><figcaption>RESULT｜3×3 中值去噪</figcaption><div class="canvas-frame"><canvas id="denoise-result" aria-label="去噪後的夜景照片"></canvas></div></figure>
+          <div class="denoise-panel">
+            <div class="sliders denoise-slider">
+              <label><span>雜訊量</span><input id="denoise-level" type="range" min="0" max="60" value="30"><output id="denoise-level-value">30</output></label>
+            </div>
+            <div class="denoise-kernel"><span>3</span><span>1</span><span>9</span><span>7</span><span class="bad">250</span><span>2</span><span>8</span><span>4</span><span class="pick">5</span></div>
+            <p class="denoise-status">中間那格是<span class="pink">壞掉的 250</span>。九個數字排序後是 1 2 3 4 <b class="cyan">5</b> 7 8 9 250，取正中間的 <span class="cyan">5</span>。</p>
+            <p id="denoise-error" class="denoise-error">跟原圖的平均差距　—</p>
+            <div class="denoise-note">
+              <span class="cyan">和第 12 頁同一個 3×3 視窗，只是規則不同：</span>卷積是「乘完再加」，會被一個壞掉的亮點整個拉走；中值是「排序後取中間」，那個亮點連進都進不來。視窗一樣，換個規則，能做的事就不一樣。
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          【20:30–23:00｜互動 10】接第 11 頁：暗部一被拉亮，本來看不見的雜訊也跟著被放大——這才是夜拍真正的難題。把雜訊量拉到 60，讓同學看清楚那些壞掉的亮點。用畫面上那九個數字現場帶一次中值：排序後取中間，壞點連進都進不來；而邊緣兩側的數字仍然分屬兩群，所以邊界留得住。再請同學看「跟原圖的平均差距」——這是把好壞變成一個可以比較的數字，之後所有影像演算法都靠它評分。留個伏筆：這是人訂的規則；第 23 頁會看到模型自己學出來的去噪規則，強到可以無中生有。
+          <br><br>[Sources]<br>
+          - Japanese town night photograph: Tsuyoshi Kozu, Unsplash License, https://unsplash.com/photos/a-quiet-street-in-a-japanese-town-at-night-1PCRlXw7BjI<br>
+          - Median filtering for impulse noise: OpenCV, “Smoothing Images,” https://docs.opencv.org/4.11.0/d4/d13/tutorial_py_filtering.html
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>色彩風格轉移 <span class="concept-pills"><b class="concept-pill tag-probability">機率</b></span></span></div>
+        <p class="eyebrow">MATCH THE MOOD, NOT THE OBJECT</p>
+        <h2>不用複製每個像素，也能搬走<span class="pink">畫面的氣氛</span></h2>
+        <div class="lab-triplet color-transfer-triplet">
+          <figure><figcaption>SOURCE｜保留內容</figcaption><div class="canvas-frame"><canvas id="transfer-source"></canvas></div></figure>
+          <figure><figcaption>REFERENCE｜想要的色調</figcaption><div class="canvas-frame"><img src="assets/reference.jpg" alt="色彩轉移使用的參考照片"></div></figure>
+          <figure><figcaption>RESULT｜套用後</figcaption><div class="canvas-frame"><canvas id="transfer-result"></canvas></div></figure>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1.25fr;gap:34px;align-items:center;margin-top:22px">
+          <div class="stat-row">
+            <div class="stat"><b id="source-mean">—</b><small>原圖 RGB 平均</small></div>
+            <div class="stat"><b id="reference-mean">—</b><small>夕陽 RGB 平均</small></div>
+            <div class="stat"><b class="pink">平均 / 標準差</b><small>顏色的中心在哪／散得多開</small></div>
+          </div>
+          <div class="sliders"><label style="grid-template-columns:100px 1fr 82px"><span>轉移量</span><input id="transfer-mix" type="range" min="0" max="100" value="0"><output id="transfer-value">0%</output></label></div>
+        </div>
+        <p style="margin-top:22px;color:var(--muted);font-size:20px">社群軟體的「風格濾鏡」大多是這一招：不管畫面裡有什麼，只把顏色的平均和散開程度搬過去。</p>
+        <aside class="notes">
+          【23:00–25:00｜互動 11】先只給兩張原圖，問同學：夕陽圖的 RGB 平均哪個高？標準差代表什麼？再把轉移量從 0 拉到 100，請同學說「哪些東西沒搬、哪些統計搬了」——房子、人、構圖都沒動，動的只有顏色分布的中心與寬度。
+          <br><br>[Sources]<br>
+          - Source and reference images: user-provided assets, source.bmp and reference.jpg.<br>
+          - Concept and use cases: user-provided source deck, slides 6–9, and color_transfer.html.
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>快門前的 0.3 秒｜自動對焦 <span class="concept-pills"><b class="concept-pill tag-differential">微分</b><b class="concept-pill tag-optimization">最佳化</b></span></span></div>
+        <p class="eyebrow">YOUR PHONE SOLVES THIS EVERY TIME YOU SHOOT</p>
+        <h2>你按下拍照前，手機正在<span class="cyan">找一個最高分</span></h2>
+        <div class="focus-lab">
+          <figure>
+            <figcaption>LIVE VIEW｜模擬鏡頭移動</figcaption>
+            <div class="canvas-frame focus-image-frame"><canvas id="focus-image" aria-label="反差對焦的模糊與清晰影像"></canvas></div>
+          </figure>
+          <div class="focus-panel">
+            <figure>
+              <figcaption>FOCUS CURVE｜反差分數</figcaption>
+              <div class="focus-chart-frame"><canvas id="focus-chart" aria-label="鏡頭位置與反差分數曲線"></canvas></div>
+            </figure>
+            <div class="equation focus-equation"><b>分數最高的位置，就是最清楚的位置</b><small style="display:block;margin-top:10px;color:var(--muted);font-size:19px">分數＝畫面裡亮度變化的總量，也就是把第 10 頁的邊緣強度全部加起來</small></div>
+            <div class="sliders focus-slider">
+              <label><span>鏡頭位置</span><input id="focus-position" type="range" min="0" max="100" step="0.1" value="20"><output id="focus-position-value">20</output></label>
+            </div>
+            <div class="focus-actions"><button id="focus-auto">▶ 自動對焦</button><button id="focus-reset">↺ 失焦重來</button></div>
+            <p id="focus-status" class="focus-status" aria-live="polite">往右拖：分數還在上升就繼續走；開始下降代表走過頭了。</p>
+            <p id="focus-fit-result" class="focus-fit-result">尚未進行峰值擬合</p>
+          </div>
+        </div>
+        <aside class="notes">
+          【25:00–27:30｜互動 12】在 x*=62 時影像最清楚、f(x*)=100；往左時 f′(x)&gt;0，往右時 f′(x)&lt;0。真實相機會在每個鏡頭位置拍一張影像，再以梯度能量 Σ[(ΔxI)²+(ΔyI)²] 等方法得到反差分數。按「自動對焦」後，鏡頭比較相鄰位置的 Δf，沿分數增加方向爬山；分數開始下降就代表越過峰值，再取峰值附近三點做二次曲線插值，估計 x*。
+          <br><br>三點拋物線頂點：x* = x₂ − { (x₂−x₁)²[f(x₂)−f(x₃)] − (x₂−x₃)²[f(x₂)−f(x₁)] } / { 2[(x₂−x₁)[f(x₂)−f(x₃)] − (x₂−x₃)[f(x₂)−f(x₁)]] }。
+          <br><br>[Sources]<br>
+          - Image: Pixnio, “Asia, building, facade, architecture, color, colorful,” CC0, https://pixnio.com/interiors-and-exteriors-design/exterior/asia-building-facade-architecture-color-colorful<br>
+          - Raspberry Pi, “Image Signal Processor Specification,” CDAF configuration: https://datasheets.raspberrypi.com/camera/raspberry-pi-image-signal-processor-specification.pdf<br>
+          - OpenCV, “Image Gradients”: https://docs.opencv.org/4.7.0/d5/d0f/tutorial_py_gradients.html
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>門檻分割｜醫學影像 <span class="concept-pills"><b class="concept-pill tag-probability">機率</b><b class="concept-pill tag-optimization">最佳化</b></span></span></div>
+        <p class="eyebrow">ONE NUMBER, TWO CLASSES</p>
+        <h2>一條門檻，就能把<span class="pink">骨頭</span>從腦袋裡挑出來</h2>
+        <div class="threshold-lab">
+          <figure><figcaption>INPUT｜真實腦部 CT 切面</figcaption><div class="canvas-frame"><canvas id="threshold-before" aria-label="真實腦部電腦斷層切面"></canvas></div></figure>
+          <figure><figcaption>OUTPUT｜被選中的像素</figcaption><div class="canvas-frame"><canvas id="threshold-after" aria-label="門檻值產生的分割遮罩"></canvas></div></figure>
+          <div class="threshold-controls">
+            <div class="equation threshold-equation">亮度 ≥ T → 選中<br>亮度 &lt; T → 不選<small style="display:block;margin-top:12px;color:var(--muted);font-size:18px;line-height:1.5">骨頭最會擋 X 光，所以最亮；腦組織居中；空氣最暗。</small></div>
+            <div class="sliders threshold-slider">
+              <label><span>T</span><input id="threshold-value" type="range" min="0" max="255" value="120"><output id="threshold-output">120</output></label>
+            </div>
+            <div class="toolbar threshold-presets">
+              <button data-threshold="60">T = 60</button>
+              <button data-threshold="120" class="active">T = 120</button>
+              <button data-threshold="180">T = 180</button>
+              <button id="threshold-auto">自動找門檻（Otsu）</button>
+            </div>
+            <p id="threshold-status" class="threshold-status" aria-live="polite">被選中的比例：—</p>
+          </div>
+        </div>
+        <aside class="notes">
+          【27:30–29:30｜互動 13】T 拉低 → 整顆頭被選中；T 拉高 → 只剩一圈頭骨。請學生先猜「要多少才只剩骨頭」再驗證。接著按 Otsu：電腦自己看亮度分布，找出能把兩群分最開的那條線——不用人訂數字。強調這是最簡單的分割，每個像素只回答「是／不是」，醫師量腦出血或腫瘤體積就是從這一步開始。最後留一個問題接下一頁：這張切面，是怎麼在不切開頭的情況下拍出來的？
+          <br><br>[Sources]<br>
+          - Clinical CT image (cropped): Mikael Häggström, M.D., “CT of a normal brain, axial 29,” CC0, https://commons.wikimedia.org/wiki/File:CT_of_a_normal_brain,_axial_29.png<br>
+          - OpenCV, “Image Thresholding”: https://docs.opencv.org/4.7.0/d7/d4d/tutorial_py_thresholding.html
+        </aside>
+      </section>
+
+
+      <section class="statement ct-transition" data-background-color="#0d1020">
+        <div>
+          <p class="big">看不到裡面，<br>能不能只靠<span class="amber">影子倒推真相</span>？</p>
+        </div>
+        <aside class="notes">
+          【29:30–30:00】拿一個水瓶或筆袋當場旋轉，用手機手電筒製造不同影子。問：一個影子夠不夠知道裡面長什麼樣？
+          <br><br>[Sources]<br>
+          - Clinical CT image: Mikael Häggström, M.D., “CT of a normal brain, axial 29,” CC0, https://commons.wikimedia.org/wiki/File:CT_of_a_normal_brain,_axial_29.png
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>投影 × CT <span class="concept-pills"><b class="concept-pill tag-matrix">矩陣</b></span></span></div>
+        <p class="eyebrow">COMPUTED TOMOGRAPHY — LIVE RECONSTRUCTION</p>
+        <h2>影子越多，重建越接近<span class="cyan">真相</span></h2>
+        <div class="ct-lab">
+          <div class="ct-controls">
+            <figure class="real-ct-thumb">
+              <img src="assets/web-ct-brain.png" alt="真實腦部 CT 切面">
+              <figcaption><b>REAL CT</b><span>上一頁那張切面，就是這樣算出來的</span></figcaption>
+            </figure>
+            <div class="sliders ct-slider">
+              <label><span>角度</span><input id="ct-views" type="range" min="4" max="144" step="4" value="12"><output id="ct-views-value">12</output></label>
+            </div>
+            <div class="toolbar ct-presets">
+              <button data-ct-views="4">4 個影子</button>
+              <button data-ct-views="12" class="active">12 個</button>
+              <button data-ct-views="36">36 個</button>
+              <button data-ct-views="72">72 個</button>
+              <button data-ct-views="144">144 個</button>
+            </div>
+            <button id="ct-auto-scan" class="scan-button">▶ 自動掃一圈</button>
+            <p id="ct-quality" class="ct-quality">輪廓出來了，但還看得到一條一條的紋路。</p>
+            <div class="ct-equation"><span class="cyan mono">投影 b</span> ＋ 不同角度 → <span class="pink mono">重建 x</span></div>
+          </div>
+          <div class="ct-visuals">
+            <figure class="ct-figure">
+              <figcaption>藏在裡面的切面 x</figcaption>
+              <div class="ct-canvas-frame"><canvas id="ct-phantom" aria-label="模擬身體切面"></canvas><div id="ct-source-dot" class="ct-source-dot"></div></div>
+            </figure>
+            <figure class="ct-figure">
+              <figcaption>量到的所有影子 b</figcaption>
+              <div class="ct-canvas-frame sinogram-frame"><canvas id="ct-sinogram" aria-label="投影形成的正弦圖"></canvas></div>
+            </figure>
+            <figure class="ct-figure">
+              <figcaption>電腦重建的結果 x̂</figcaption>
+              <div class="ct-canvas-frame"><canvas id="ct-reconstruction" aria-label="CT 重建結果"></canvas></div>
+            </figure>
+          </div>
+        </div>
+        <div class="source-line">簡化 filtered back projection｜概念參考 scikit-image Radon transform、NIBIB CT</div>
+        <aside class="notes">
+          【30:00–33:00｜互動 14】全班先押 4、12、36、72、144，再逐級增加角度；每次用一句話描述改善與殘留誤差。連回聯立方程：更多獨立觀測通常帶來更多限制，但不是無限增加就沒有代價。
+          <br><br>[Sources]<br>
+          - scikit-image, “Radon transform”: https://scikit-image.org/docs/0.23.x/auto_examples/transform/plot_radon_transform.html<br>
+          - National Institute of Biomedical Imaging and Bioengineering, “Computed Tomography (CT)”: https://www.nibib.nih.gov/science-education/science-topics/computed-tomography-ct<br>
+          - Clinical CT image: Mikael Häggström, M.D., “CT of a normal brain, axial 29,” CC0, https://commons.wikimedia.org/wiki/File:CT_of_a_normal_brain,_axial_29.png<br>
+          - FDA, “Medical X-ray Imaging”: https://www.fda.gov/radiation-emitting-products/medical-imaging/medical-x-ray-imaging
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>影子解碼｜逆問題 <span class="concept-pills"><b class="concept-pill tag-matrix">矩陣</b><b class="concept-pill tag-optimization">最佳化</b></span></span></div>
+        <p class="eyebrow">THE SHADOW-CODE PUZZLE</p>
+        <h2>只看每排亮幾格，你能還原<span class="pink">隱藏圖案</span>嗎？</h2>
+        <div class="inverse-lab">
+          <div>
+            <div class="projection-puzzle" aria-label="影子解碼像素遊戲">
+              <div class="puzzle-corner">b</div>
+              <div id="inverse-col-sums" class="inverse-col-sums"></div>
+              <div id="inverse-row-sums" class="inverse-row-sums"></div>
+              <div id="inverse-grid" class="inverse-grid"></div>
+            </div>
+            <p class="projection-caption">上方與左側的數字，就是量到的「影子」。點格子改變你猜的圖案。</p>
+          </div>
+          <div class="inverse-copy">
+            <div class="equation">A x = b</div>
+            <p><span class="cyan mono">x</span> 是看不到的圖案；<span class="pink mono">b</span> 是每排的加總。你只拿到答案，要倒推題目——這就是上一頁 CT 在做的事，只是縮小成 6×6。</p>
+            <p id="inverse-status" class="inverse-status">先完成兩隻眼睛，再讓每排數字吻合。</p>
+            <div class="toolbar inverse-actions">
+              <button id="inverse-hint">給我提示</button>
+              <button id="inverse-solution">顯示一解</button>
+              <button id="inverse-alternative">換一個同樣的解</button>
+              <button id="inverse-reset">重設</button>
+            </div>
+            <div class="inverse-twist">
+              <span class="pink">有趣的地方：</span>即使所有影子都吻合，也可能不只一個圖案。所以 CT 要掃很多角度，還要加上「人體大概長什麼樣」這種額外條件。
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          【33:00–36:00｜互動 15】請一位同學上來點，全班喊下一格。完成後按「換一個同樣的解」，讓同學自己說出為什麼 Ax = b 可能有多解；再連回上一頁：這就是 CT 為什麼要轉一整圈。
+          <br><br>[Sources]<br>
+          - Inverse-problem framing adapted from the user-provided source deck, slides 10–11.<br>
+          - scikit-image Radon transform example: https://scikit-image.org/docs/0.23.x/auto_examples/transform/plot_radon_transform.html
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>從「改像素」到「懂像素」 <span class="concept-pills"><b class="concept-pill tag-matrix">矩陣</b><b class="concept-pill tag-probability">機率</b></span></span></div>
+        <div class="split reverse">
+          <div>
+            <p class="eyebrow">WHAT DOES THE COMPUTER NEED TO ANSWER?</p>
+            <h2>電腦視覺，把像素變成<span class="cyan">可以回答的問題</span></h2>
+            <div class="vision-examples">
+              <div><b>分類</b><span>整張圖是什麼？</span><small>相簿辨識貓或狗</small></div>
+              <div><b>偵測</b><span>物體在哪裡？</span><small>人臉解鎖、找出行人</small></div>
+              <div><b>分割</b><span>每個像素是什麼？</span><small>標出器官或病灶區域</small></div>
+            </div>
+          </div>
+          <div class="seg-figure"><img src="assets/ai-segmentation.png" alt="醫學影像分割示意"></div>
+        </div>
+        <div class="source-line">概念參考：PyTorch｜Defining a Neural Network</div>
+        <aside class="notes">
+          【36:00–37:00】先讓學生判斷：美膚屬於影像處理，人臉解鎖屬於電腦視覺。接著把三個例子配對到分類、偵測、分割。最後連回卷積那一頁：AI 用的也是小矩陣找邊緣與紋理，差別在於那九個數字是「學」出來的，不是人訂的。
+          <br><br>[Sources]<br>
+          - Segmentation image: user-provided source deck asset, slide 12.<br>
+          - PyTorch Tutorials, “Defining a Neural Network”: https://docs.pytorch.org/tutorials/recipes/recipes/defining_a_neural_network.html
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>AI 是怎麼學會的 <span class="concept-pills"><b class="concept-pill tag-differential">微分</b><b class="concept-pill tag-optimization">最佳化</b></span></span></div>
+        <p class="eyebrow">LEARNING MEANS ADJUSTING NUMBERS</p>
+        <h2>模型犯錯，數學就告訴它：<span class="pink">下一步往哪裡調</span></h2>
+        <div class="gradient-figure">
+          <img src="assets/gradient-descent-landscape.png" alt="模型沿著誤差地形的斜坡逐步走向低誤差谷底">
+          <div class="gradient-label gradient-high"><b>犯錯多</b><span>誤差高</span></div>
+          <div class="gradient-label gradient-direction"><b>看坡度</b><span>斜率指向比較低的那一邊</span></div>
+          <div class="gradient-label gradient-low"><b>更接近答案</b><span>誤差變小</span></div>
+          <div class="gradient-formula fragment fade-up">預測 → 量誤差 → 往下坡調一點 → 再預測</div>
+        </div>
+        <aside class="notes">
+          【37:00–38:00】沿著圖片中的四個位置說明：模型先做預測、量出誤差，再依梯度指出的下坡方向調整權重；反覆更新後逐漸靠近低誤差谷底。把「往哪邊走比較低」連回邊緣偵測的斜率概念，一句話帶過即可，不推導。
+          <br><br>[Sources]<br>
+          - Error-landscape illustration: AI-generated for this presentation with OpenAI image generation.<br>
+          - Training-loop concept adapted from the user-provided source deck, slide 12.<br>
+          - PyTorch neural network tutorial: https://docs.pytorch.org/tutorials/beginner/blitz/neural_networks_tutorial.html
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>生成式 AI｜Diffusion <span class="concept-pills"><b class="concept-pill tag-probability">機率</b><b class="concept-pill tag-differential">微分</b><b class="concept-pill tag-optimization">最佳化</b></span></span></div>
+        <p class="eyebrow">HOW AI DRAWS SOMETHING THAT NEVER EXISTED</p>
+        <h2>AI 畫圖的方法，是<span class="pink">學會把雜訊擦乾淨</span></h2>
+        <div class="diffusion-lab">
+          <figure>
+            <figcaption id="diffusion-stage">原圖</figcaption>
+            <div class="canvas-frame diffusion-frame"><canvas id="diffusion-canvas" aria-label="照片與雜訊之間的漸變示範"></canvas></div>
+          </figure>
+          <div class="diffusion-panel">
+            <div class="diffusion-steps">
+              <div><b>01</b><span>拿真實照片，一步一步<i>加雜訊</i></span></div>
+              <div><b>02</b><span>讓模型練習：從吵一點的圖，猜回<i>乾淨一點</i>的圖</span></div>
+              <div><b>03</b><span>真的要畫的時候，從<i>純雜訊</i>開始反覆擦，就長出一張沒人拍過的圖</span></div>
+            </div>
+            <div class="sliders diffusion-slider">
+              <label><span>加噪步數</span><input id="diffusion-step" type="range" min="0" max="100" value="0"><output id="diffusion-step-value">0</output></label>
+            </div>
+            <div class="toolbar diffusion-actions">
+              <button id="diffusion-play">▶ 從雜訊生成</button>
+              <button id="diffusion-noise">↺ 回到純雜訊</button>
+            </div>
+            <p id="diffusion-status" class="diffusion-status" aria-live="polite">往右拖：照片一步一步溶進雜訊。</p>
+            <div class="diffusion-callback">
+              <span class="cyan">還記得嗎：</span>第 14 頁的去噪是<b>把雜訊拿掉</b>；第 20 頁的逆問題是<b>從破壞後的結果倒推原本</b>。Diffusion 就是把這兩件事做到底——先學會怎麼被弄壞，再學會怎麼還原。
+            </div>
+            <p class="selfie-note">這裡是概念示範：反向只是把同一條路倒著播；真正的模型每一步都是用學到的規則猜出來的。</p>
+          </div>
+        </div>
+        <aside class="notes">
+          【38:00–41:00｜互動 16】先讓同學拖滑桿，看鸚鵡怎麼溶進雜訊——強調「每一步只加一點點」。接著問：如果每一步只加一點點，那反過來每一步是不是也只要拿掉一點點？按「從雜訊生成」讓畫面自己長出來。三個數學落點：雜訊是高斯分布（機率）、模型靠誤差梯度學會每一步怎麼擦（微分＋最佳化）、每一步的運算仍然是矩陣。最後點破這是今天所有招式的總合，也回應第 20 頁：生成就是一個超大的逆問題，答案不只一個，所以同一句提示每次畫出來都不一樣。
+          <br><br>[Sources]<br>
+          - Forward process follows the DDPM formulation: Ho, Jain &amp; Abbeel, “Denoising Diffusion Probabilistic Models,” NeurIPS 2020, https://arxiv.org/abs/2006.11239<br>
+          - Cosine noise schedule: Nichol &amp; Dhariwal, “Improved Denoising Diffusion Probabilistic Models,” 2021, https://arxiv.org/abs/2102.09672<br>
+          - Image: Luc Viatour, “Ara ararauna,” CC BY 2.0, https://commons.wikimedia.org/wiki/File:Ara_ararauna_Luc_Viatour.jpg
+        </aside>
+      </section>
+
+
+      <section>
+        <div class="topbar"><span>回頭看｜六種數學地圖</span></div>
+        <p class="eyebrow">ONE PHOTO, SIX MATH LENSES</p>
+        <h2>剛才每一個效果，其實都是<span class="cyan">這六種數學</span></h2>
+        <div class="concept-map">
+          <div class="concept-card tag-function fragment fade-up"><b>函數</b><small>變亮 y = x + b、低光增強、濾鏡一格一格算</small></div>
+          <div class="concept-card tag-vector fragment fade-up"><b>向量</b><small>RGB 三個數字、黑白＝加權相加</small></div>
+          <div class="concept-card tag-matrix fragment fade-up"><b>矩陣</b><small>像素表、模糊、3×3 卷積、中值去噪、CT 重建</small></div>
+          <div class="concept-card tag-differential fragment fade-up"><b>微分</b><small>邊緣偵測、自動對焦、AI 的調整方向</small></div>
+          <div class="concept-card tag-probability fragment fade-up"><b>機率</b><small>色彩統計、CT 門檻分割、電腦視覺的「有幾成把握」</small></div>
+          <div class="concept-card tag-optimization fragment fade-up"><b>最佳化</b><small>自動對焦找最高分、模型訓練找最小誤差</small></div>
+        </div>
+        <aside class="notes">
+          【41:00–42:30】這是全場的六色導航頁。依序揭曉函數、向量、矩陣、微分、機率、最佳化；先不定義，只告訴學生每做完一個範例，就會在右上角貼上主要數學標籤。同一個真實問題可以同時使用兩種以上數學。
+          <br><br>[Sources]<br>
+          - Concept adapted from the problem-solving loop in the user-provided source deck, slides 3–4.
+        </aside>
+      </section>
+
+
+      <section class="closing" data-transition="fade">
+        <div class="closing-copy">
+          <p class="takeaway">函數改像素，向量與矩陣描述影像；<br>微分找變化，機率做判斷，最佳化找答案。</p>
+          <div class="closing-concepts"><span class="tag-function">函數</span><span class="tag-vector">向量</span><span class="tag-matrix">矩陣</span><span class="tag-differential">微分</span><span class="tag-probability">機率</span><span class="tag-optimization">最佳化</span></div>
+          <div class="course-map">
+            <div><b class="cyan">線性代數</b><span>把影像寫成向量與矩陣</span></div>
+            <div><b class="blue">程式設計</b><span>把想法變成跑得動的程式</span></div>
+            <div><b class="pink">微積分</b><span>找變化、調參數</span></div>
+            <div><b class="amber">機率統計</b><span>面對雜訊與不確定</span></div>
+          </div>
+        </div>
+        <div class="hero-meta"><span>游承書｜csyou@o365.fcu.edu.tw</span><span>KEEP EXPLORING →</span></div>
+        <aside class="notes">
+          【42:30–43:30】回到六色數學地圖，請全班依序喊出：函數、向量、矩陣、微分、機率、最佳化。最後追問「今天哪一個影像範例同時用了兩種以上數學？」強調真實問題會讓數學彼此合作。
+          <br><br>[Sources]<br>
+          - Background image: Luc Viatour, “Ara ararauna,” CC BY 2.0, https://commons.wikimedia.org/wiki/File:Ara_ararauna_Luc_Viatour.jpg<br>
+          - Contact information: user-provided source deck, slide 2.
+        </aside>
+      </section>
+
+    
+
+    
+
+    
+
+    </div>
+  </div>
+
+  <script src="vendor/reveal/reveal.js"></script>
+  <script src="vendor/reveal/notes.js"></script>
+  <script src="js/interactions.js?v=20260901-1"></script>
+  <script src="js/selfie-module.js?v=20260830-1"></script>
+  <script src="js/denoise-module.js?v=20260901-5"></script>
+  <script src="js/diffusion-module.js?v=20260831-1"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      history: true,
+      controls: true,
+      progress: true,
+      center: false,
+      width: 1600,
+      height: 900,
+      margin: 0.035,
+      minScale: 0.2,
+      maxScale: 2,
+      transition: 'fade',
+      backgroundTransition: 'fade',
+      slideNumber: 'c/t',
+      pdfSeparateFragments: false,
+      plugins: [RevealNotes]
+    });
+  </script>
+</body>
+</html>
